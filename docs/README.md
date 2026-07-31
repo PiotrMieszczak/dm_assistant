@@ -1,0 +1,45 @@
+# DM Assistant — Documentation
+
+MVP documentation for **DM Assistant** (working product name: *Referee*), an in-session
+workspace for tabletop RPG game masters.
+
+This documentation set is the starting point for a fresh build. It supersedes the
+`referee-assistant` proof of concept, whose architecture, agent model, and technical
+guides are **not** carried forward. The authoritative inputs are the Claude Design
+project *RPG Assistant Design Spec* and the decisions recorded here.
+
+## Reading order
+
+| # | Document | What it answers |
+|---|----------|-----------------|
+| 1 | [product-brief.md](product-brief.md) | What we are building, for whom, and why |
+| 2 | [mvp-scope.md](mvp-scope.md) | What ships in v1 and what explicitly does not |
+| 3 | [data-model.md](data-model.md) | Entities, relationships, and storage |
+| 4 | [architecture.md](architecture.md) | System shape, stack, and boundaries |
+| 5 | [design/design-spec.md](design/design-spec.md) | Screens, layout, and interaction behaviour |
+| 6 | [design/design-tokens.md](design/design-tokens.md) | Colors, type, spacing, radii, shadows |
+| 7 | [api-contract.md](api-contract.md) | HTTP surface between frontend and backend |
+| 8 | [roadmap.md](roadmap.md) | Delivery phases and acceptance gates |
+| 9 | [adr/](adr/) | Architectural Decision Records |
+
+## Status
+
+**Pre-implementation.** No application code exists yet. These documents define the
+work; the repository is scaffolded in a later phase (see [roadmap.md](roadmap.md)).
+
+## Source of truth
+
+- **Design** — Claude Design project `ec1d38ec-c81f-42b8-8952-7a922851f405`
+  ("RPG Assistant Design Spec"), file `Referee Workspace.dc.html`. The prototype is a
+  *reference*, not production code: read it for structure, layout, and exact values.
+  Its runtime (`support.js`) is a build artifact and is never ported.
+- **Decisions** — anything that constrains implementation belongs in [adr/](adr/),
+  not in prose scattered across these files.
+
+## Conventions
+
+- Design tokens are the only source of visual values. No hardcoded hex in components.
+- **No Tailwind.** Styling is CSS Modules over CSS custom properties (see
+  [adr/adr-0004-css-modules-over-tailwind.md](adr/adr-0004-css-modules-over-tailwind.md)).
+- Documents state decisions, not aspirations. If something is unbuilt, it is listed
+  under "Out of scope" or in the roadmap — never described in the present tense.
