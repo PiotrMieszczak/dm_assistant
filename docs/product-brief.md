@@ -59,7 +59,12 @@ background with visible status.
 **PRIN-004 — Local-first, single-user.**
 Data lives on the GM's machine. No accounts to manage, no sync, no sharing in v1. The
 login screen exists in the design as a shell for later multi-user work; v1 treats it as
-a local profile.
+a local profile — a profile picker, not security.
+
+Hosting for other game masters is a wanted end state, not a v1 goal. When it arrives it
+brings Postgres and Supabase Auth, replacing both SQLite and the local profile
+([ADR-0007](adr/adr-0007-local-profile-auth.md)). v1 is built so that migration stays
+cheap, not so it is avoided.
 
 **PRIN-005 — The interface is calm.**
 Dark, low-chrome, image-forward. The tool sits beside a game; it should not compete with

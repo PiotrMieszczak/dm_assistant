@@ -184,6 +184,26 @@ Session bodies are chunked and indexed like documents, so past sessions are retr
 
 Citations satisfy AC-002 and make grounding auditable.
 
+### Profile
+
+A **single row**. v1 is local-first and single-user, so this holds the GM's own details
+for display — it is not an account.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | int PK | Always `1` in v1 |
+| `display_name` | text | "Game Master" |
+| `table_name` | text? | "The Ashfall Table" |
+| `email` | text? | A label only. Nothing is sent to it, nothing authenticates against it |
+| `avatar_path` | text? | Upload |
+
+**There is no password column, and that is deliberate.** Adding one would imply security
+this does not provide. The design's login screen is a profile picker: "Sign in" and
+"Continue with Google" both proceed to the campaign picker without checking anything.
+
+When hosting arrives, this row is replaced by real accounts in Supabase Auth, and entities
+gain an `owner_id` ([ADR-0007](adr/adr-0007-local-profile-auth.md)).
+
 ## Modelling decisions worth noting
 
 **DEC-001 — Characters and players are one table.**
@@ -198,6 +218,11 @@ be wrong for one of the two systems the picker requires on day one.
 **DEC-003 — Relationships are first-class rows, not embedded lists.**
 The prototype embeds `connections` in each entity. Real storage needs edges queryable
 from both ends to render a graph without loading every entity.
+
+**DEC-005 — Every table carries `campaign_id`; none carries an owner yet.**
+Campaign is the isolation boundary in v1. When hosting arrives, adding `owner_id` is one
+column plus a backfill rather than a re-model — the reason the migration in
+[ADR-0007](adr/adr-0007-local-profile-auth.md) stays cheap.
 
 **DEC-004 — GM notes are private by construction.**
 `notes` on characters and factions hold spoilers ("Do not reveal before Session 15").

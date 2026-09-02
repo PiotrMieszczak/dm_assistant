@@ -14,6 +14,7 @@ knowing why it was made, it belongs in an ADR.
 | [0004](adr-0004-css-modules-over-tailwind.md) | CSS Modules over design tokens; Tailwind excluded | Accepted |
 | [0005](adr-0005-fts5-before-vectors.md) | FTS5 keyword retrieval before semantic search | Accepted |
 | [0006](adr-0006-llm-gateway.md) | Centralized LLM Gateway with runtime provider switching | Accepted |
+| [0007](adr-0007-local-profile-auth.md) | Local profile in v1; Supabase Auth when hosting arrives | Accepted |
 
 ## Format
 
@@ -51,6 +52,11 @@ Two threads run through these records and are worth reading together:
 models from ingestion; [ADR-0006](adr-0006-llm-gateway.md) confines them to a single
 gateway at query time. Both are enforced by architectural tests rather than convention,
 because both erode the first time someone adds "just one small call".
+
+**Deferral with a named successor.** [ADR-0007](adr-0007-local-profile-auth.md) goes
+further than deferring authentication: it names what will replace the local profile, and
+why, so v1 can avoid choices that would make that migration harder. A deferral that names
+its successor is a plan; one that does not is a gap.
 
 **Deferral with a trigger, not deferral by silence.**
 [ADR-0003](adr-0003-sqlite-single-store.md) and

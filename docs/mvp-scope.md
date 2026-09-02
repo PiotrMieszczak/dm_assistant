@@ -18,7 +18,7 @@ interface. The distinction is how much *behaviour* sits behind each screen in v1
 
 ### Shell and navigation — Full
 
-- Login screen (local profile; no real auth — see PRIN-004)
+- Login screen (local profile; **no real auth** — see PRIN-004 and [ADR-0007](adr/adr-0007-local-profile-auth.md))
 - Campaign picker with add-campaign modal (image + mandatory system)
 - App shell: 72px header, floating nav rail (60px ↔ 236px), AI panel column
 - Mobile shell ≤900px: bottom tab bar, More sheet, AI slide-over
@@ -83,7 +83,7 @@ Rendered from real relationship data, not mock data.
 | **Vector search / embeddings** | FTS5 keyword retrieval is the honest first attempt. Add semantic search when keyword search is demonstrably insufficient — measured, not assumed. See [ADR-0005](adr/adr-0005-fts5-before-vectors.md). | Retrieval quality measurably fails on paraphrased queries |
 | **OCR for scanned PDFs** | Native-text PDFs cover the common case. OCR adds a heavy dependency chain. The design's `Queued` + "awaiting OCR" state is built; the processor is not. | Users upload scanned material in practice |
 | **Multi-agent orchestration** | One assistant with retrieval tools is simpler and easier to evaluate than five agents behind an intent router. | A single agent measurably underperforms on distinct task types |
-| **Real authentication** | Local-first, single-user. The login screen is a shell. | Multi-user or hosted deployment is on the table |
+| **Real authentication** | Local-first, single-user. The login screen is a profile picker, not security. Supabase Auth is the named successor — see [ADR-0007](adr/adr-0007-local-profile-auth.md). | A second person wants an account, or access from another device |
 | **Automatic entity extraction from PDFs** | Auto-creating NPCs from a module is attractive and unreliable. Manual entry first; the extraction path stays open. | Extraction accuracy can be measured against a fixture corpus |
 | **Session recap generation** | Depends on a corpus of session logs existing first. | Session logs are in regular use |
 | **Plot analysis / suggestions** | Same dependency, plus a much fuzzier success criterion. | Core retrieval is trusted |
