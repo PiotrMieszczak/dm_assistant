@@ -7,9 +7,50 @@ scope server-side (BND-003).
 ## Conventions
 
 - IDs are integers except `campaign.id`, which is a slug
+- All endpoints except `/auth/*` require an authenticated session
 - Timestamps are ISO 8601 UTC
 - Errors: `{ "detail": "message" }` with a conventional status code
 - Collections return bare arrays; v1 has no pagination (single-user scale)
+
+## Auth
+
+Sessions are signed JWTs delivered in **httpOnly, Secure, SameSite=Lax cookies** — not in
+response bodies, and never in `localStorage`. The browser attaches them automatically, so
+no `Authorization` header is used ([ADR-0008](adr/adr-0008-own-auth-v1.md)).
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `POST` | `/auth/signup` | Create an account; sets session cookies |
+| `POST` | `/auth/login` | Email and password; sets session cookies |
+| `POST` | `/auth/logout` | Clears cookies, revokes the refresh token |
+| `POST` | `/auth/refresh` | Exchanges the refresh cookie for a new access cookie |
+| `GET` | `/auth/me` | The current user, or `401` |
+| `GET` | `/auth/google` | Starts the OAuth flow; redirects to Google |
+| `GET` | `/auth/google/callback` | Handles the return; validates `state`; sets cookies |
+| `POST` | `/auth/password-reset` | Requests a reset email |
+| `POST` | `/auth/password-reset/confirm` | Consumes the token, sets a new password |
+
+```jsonc
+// POST /auth/signup
+{ "email": "gm@ashfall.table", "password": "…", "displayName": "Game Master" }
+// 201 — cookies set; no token in the body
+{ "id": 1, "email": "gm@ashfall.table", "displayName": "Game Master",
+  "tableName": null, "avatarUrl": null, "emailVerified": false }
+```
+
+```jsonc
+// POST /auth/password-reset
+{ "email": "someone@example.com" }
+// 202 — ALWAYS this response, whether or not the address is registered.
+{ "detail": "If that address has an account, a reset link has been sent." }
+```
+
+That identical response is deliberate: differentiating would turn the endpoint into an
+account-enumeration oracle (IMP-007).
+
+**Every other endpoint requires a session** and is scoped to the authenticated user.
+Unauthenticated requests return `401`; requesting another user's resource returns `404`,
+not `403` — a `403` confirms the resource exists.
 
 ## Campaigns
 

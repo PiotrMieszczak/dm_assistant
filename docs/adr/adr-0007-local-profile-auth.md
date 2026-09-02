@@ -1,18 +1,24 @@
 ---
 title: "ADR-0007: Local profile in v1; Supabase Auth when hosting arrives"
-status: "Accepted"
+status: "Superseded"
 date: "2026-09-02"
 authors: "Piotr Mieszczak"
 tags: ["architecture", "decision", "auth", "deployment", "cost"]
 supersedes: ""
-superseded_by: ""
+superseded_by: "ADR-0008"
 ---
 
 # ADR-0007: Local profile in v1; Supabase Auth when hosting arrives
 
 ## Status
 
-Proposed | **Accepted** | Rejected | Superseded | Deprecated
+Proposed | Accepted | Rejected | **Superseded** | Deprecated
+
+> Superseded by [ADR-0008](adr-0008-own-auth-v1.md). This record assumed a product
+> optimising for time-to-working-software. The project is also a learning exercise, which
+> inverts the reasoning: the work this ADR avoided as "plumbing unrelated to the product"
+> is precisely the material worth building by hand. Kept for the alternatives analysis,
+> which remains accurate for a product context.
 
 ## Context
 

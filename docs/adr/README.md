@@ -14,7 +14,8 @@ knowing why it was made, it belongs in an ADR.
 | [0004](adr-0004-css-modules-over-tailwind.md) | CSS Modules over design tokens; Tailwind excluded | Accepted |
 | [0005](adr-0005-fts5-before-vectors.md) | FTS5 keyword retrieval before semantic search | Accepted |
 | [0006](adr-0006-llm-gateway.md) | Centralized LLM Gateway with runtime provider switching | Accepted |
-| [0007](adr-0007-local-profile-auth.md) | Local profile in v1; Supabase Auth when hosting arrives | Accepted |
+| [0007](adr-0007-local-profile-auth.md) | Local profile in v1; Supabase Auth when hosting arrives | Superseded |
+| [0008](adr-0008-own-auth-v1.md) | Build authentication by hand in v1 | Accepted |
 
 ## Format
 
@@ -53,10 +54,11 @@ models from ingestion; [ADR-0006](adr-0006-llm-gateway.md) confines them to a si
 gateway at query time. Both are enforced by architectural tests rather than convention,
 because both erode the first time someone adds "just one small call".
 
-**Deferral with a named successor.** [ADR-0007](adr-0007-local-profile-auth.md) goes
-further than deferring authentication: it names what will replace the local profile, and
-why, so v1 can avoid choices that would make that migration harder. A deferral that names
-its successor is a plan; one that does not is a gap.
+**A superseded record is kept, not deleted.** [ADR-0007](adr-0007-local-profile-auth.md)
+deferred authentication to a managed provider; [ADR-0008](adr-0008-own-auth-v1.md) reverses
+it once the project's purpose is stated as learning, not shipping. Both are correct under
+their own premises, and keeping the first shows *what changed* — the premise, not the
+analysis. That is the whole reason accepted records are immutable.
 
 **Deferral with a trigger, not deferral by silence.**
 [ADR-0003](adr-0003-sqlite-single-store.md) and

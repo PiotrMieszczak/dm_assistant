@@ -56,15 +56,16 @@ The workspace is used live, with players waiting. Interactions target under 300m
 Nothing blocks the GM mid-session; long work (document processing) happens in the
 background with visible status.
 
-**PRIN-004 — Local-first, single-user.**
-Data lives on the GM's machine. No accounts to manage, no sync, no sharing in v1. The
-login screen exists in the design as a shell for later multi-user work; v1 treats it as
-a local profile — a profile picker, not security.
+**PRIN-004 — Local-first, with real accounts.**
+Data lives on the GM's machine, in SQLite. There is no sync and no sharing between users,
+but v1 has **real authentication** — signup, login, Google OAuth, and password reset, all
+built in the application rather than delegated to a provider
+([ADR-0008](adr/adr-0008-own-auth-v1.md)).
 
-Hosting for other game masters is a wanted end state, not a v1 goal. When it arrives it
-brings Postgres and Supabase Auth, replacing both SQLite and the local profile
-([ADR-0007](adr/adr-0007-local-profile-auth.md)). v1 is built so that migration stays
-cheap, not so it is avoided.
+That is a deliberate choice: this project is a learning exercise as well as a tool, and a
+managed auth provider would hide exactly the mechanism worth understanding. Hosting for
+other game masters stays a possible end state; with real users in v1, it is a deployment
+question rather than a rewrite.
 
 **PRIN-005 — The interface is calm.**
 Dark, low-chrome, image-forward. The tool sits beside a game; it should not compete with

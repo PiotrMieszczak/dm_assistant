@@ -20,19 +20,23 @@ Scaffold both applications and the token system.
 **Exit gate.** A primitive rendered in Storybook is visually indistinguishable from the
 same element in the prototype, and every value it uses comes from a token.
 
-## Phase 1 — Shell and campaigns
+## Phase 1 — Authentication and campaigns
 
 The frame everything else renders inside.
 
-- Login screen (local profile)
+- Real authentication ([ADR-0008](adr/adr-0008-own-auth-v1.md)): signup, login, logout,
+  argon2 hashing, JWT sessions in httpOnly cookies, Google OAuth, password reset
+- Login screen built as designed, including the Google button and "Forgot?" link
 - Campaign picker, campaign cards, add-campaign modal with mandatory system
 - Workspace shell: header, floating nav rail with hover/pin, AI panel column
 - Mobile shell: bottom tab bar, More sheet, slide-over panel, `mob` behaviour switch
 - Routing `/login`, `/campaigns`, `/c/:campaignId/:view`
 - Campaign CRUD end to end
 
-**Exit gate.** A campaign can be created, entered, and switched; the shell matches the
-design at desktop and ≤900px, including rail expansion and panel defaults per viewport.
+**Exit gate.** AC-009, AC-010, and AC-011 — a user signs up, logs out, logs back in, and
+finds their campaigns; one user provably cannot read another's data; a reset link works
+once and expires. The shell matches the design at desktop and ≤900px, including rail
+expansion and panel defaults per viewport.
 
 ## Phase 2 — Documents and retrieval
 

@@ -7,6 +7,9 @@ database ([ADR-0003](adr/adr-0003-sqlite-single-store.md)).
 
 ```mermaid
 erDiagram
+    USER ||--o{ CAMPAIGN : owns
+    USER ||--o{ OAUTH_ACCOUNT : "linked to"
+
     CAMPAIGN ||--o{ DOCUMENT : contains
     CAMPAIGN ||--o{ CHARACTER : contains
     CAMPAIGN ||--o{ FACTION : contains
@@ -184,25 +187,34 @@ Session bodies are chunked and indexed like documents, so past sessions are retr
 
 Citations satisfy AC-002 and make grounding auditable.
 
-### Profile
+### User
 
-A **single row**. v1 is local-first and single-user, so this holds the GM's own details
-for display — it is not an account.
+A real account. v1 authenticates ([ADR-0008](adr/adr-0008-own-auth-v1.md)).
 
 | Field | Type | Notes |
 |-------|------|-------|
-| `id` | int PK | Always `1` in v1 |
+| `id` | int PK | |
+| `email` | text UNIQUE | The login identifier |
+| `password_hash` | text? | **Nullable** — argon2. Null for Google-only accounts |
 | `display_name` | text | "Game Master" |
 | `table_name` | text? | "The Ashfall Table" |
-| `email` | text? | A label only. Nothing is sent to it, nothing authenticates against it |
 | `avatar_path` | text? | Upload |
+| `email_verified` | bool | |
+| `created_at` | timestamp | |
 
-**There is no password column, and that is deliberate.** Adding one would imply security
-this does not provide. The design's login screen is a profile picker: "Sign in" and
-"Continue with Google" both proceed to the campaign picker without checking anything.
+`password_hash` is nullable so an account created through Google has no password at all —
+storing a placeholder would be worse than storing nothing.
 
-When hosting arrives, this row is replaced by real accounts in Supabase Auth, and entities
-gain an `owner_id` ([ADR-0007](adr/adr-0007-local-profile-auth.md)).
+**Supporting tables**
+
+| Table | Fields | Purpose |
+|-------|--------|---------|
+| `oauth_account` | `user_id`, `provider`, `provider_user_id` | Links a Google identity to a user |
+| `password_reset` | `user_id`, `token_hash`, `expires_at`, `used_at` | Single-use reset tokens |
+| `refresh_token` | `user_id`, `token_hash`, `expires_at`, `revoked_at` | Long-lived sessions |
+
+**Tokens are stored hashed, never in the clear** — same reasoning as passwords. A database
+read must not yield anything usable to log in with.
 
 ## Modelling decisions worth noting
 
@@ -219,10 +231,15 @@ be wrong for one of the two systems the picker requires on day one.
 The prototype embeds `connections` in each entity. Real storage needs edges queryable
 from both ends to render a graph without loading every entity.
 
-**DEC-005 — Every table carries `campaign_id`; none carries an owner yet.**
-Campaign is the isolation boundary in v1. When hosting arrives, adding `owner_id` is one
-column plus a backfill rather than a re-model — the reason the migration in
-[ADR-0007](adr/adr-0007-local-profile-auth.md) stays cheap.
+**DEC-005 — Campaigns carry `owner_id`; everything else scopes through campaign.**
+`campaign.owner_id` references `user`. Characters, quests, and documents scope by
+`campaign_id` and inherit ownership through it, so a single join answers "may this user see
+this row?" Denormalising `owner_id` onto every table would create two sources of truth that
+can disagree.
+
+This makes `BND-003` load-bearing rather than tidy: with real users, a missed owner filter
+is a data leak, not an inconvenience. Enforce it in the repository layer, and test it
+(IMP-011 in [ADR-0008](adr/adr-0008-own-auth-v1.md)).
 
 **DEC-004 — GM notes are private by construction.**
 `notes` on characters and factions hold spoilers ("Do not reveal before Session 15").

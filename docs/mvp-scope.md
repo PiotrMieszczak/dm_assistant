@@ -16,9 +16,22 @@ interface. The distinction is how much *behaviour* sits behind each screen in v1
 
 ## In scope
 
+### Authentication — Full
+
+Built by hand rather than delegated, because the project is a learning exercise as much as
+a tool ([ADR-0008](adr/adr-0008-own-auth-v1.md)).
+
+- Signup, login, logout — argon2 password hashing
+- Sessions as signed JWTs in httpOnly, Secure, SameSite cookies
+- Google OAuth, full authorization-code flow with `state` validation
+- Password reset — single-use expiring tokens, sent by email
+- Every route scoped to the authenticated owner (`BND-003`)
+
 ### Shell and navigation — Full
 
-- Login screen (local profile; **no real auth** — see PRIN-004 and [ADR-0007](adr/adr-0007-local-profile-auth.md))
+- Login screen with **real authentication** ([ADR-0008](adr/adr-0008-own-auth-v1.md)):
+  email and password with argon2 hashing, JWT sessions in httpOnly cookies, Google OAuth,
+  and password reset
 - Campaign picker with add-campaign modal (image + mandatory system)
 - App shell: 72px header, floating nav rail (60px ↔ 236px), AI panel column
 - Mobile shell ≤900px: bottom tab bar, More sheet, AI slide-over
@@ -83,7 +96,7 @@ Rendered from real relationship data, not mock data.
 | **Vector search / embeddings** | FTS5 keyword retrieval is the honest first attempt. Add semantic search when keyword search is demonstrably insufficient — measured, not assumed. See [ADR-0005](adr/adr-0005-fts5-before-vectors.md). | Retrieval quality measurably fails on paraphrased queries |
 | **OCR for scanned PDFs** | Native-text PDFs cover the common case. OCR adds a heavy dependency chain. The design's `Queued` + "awaiting OCR" state is built; the processor is not. | Users upload scanned material in practice |
 | **Multi-agent orchestration** | One assistant with retrieval tools is simpler and easier to evaluate than five agents behind an intent router. | A single agent measurably underperforms on distinct task types |
-| **Real authentication** | Local-first, single-user. The login screen is a profile picker, not security. Supabase Auth is the named successor — see [ADR-0007](adr/adr-0007-local-profile-auth.md). | A second person wants an account, or access from another device |
+| **Managed auth provider (Supabase, Clerk)** | Auth is built by hand deliberately — the project is a learning exercise, and a provider hides the mechanism. See [ADR-0008](adr/adr-0008-own-auth-v1.md). | The maintenance burden outgrows its teaching value |
 | **Automatic entity extraction from PDFs** | Auto-creating NPCs from a module is attractive and unreliable. Manual entry first; the extraction path stays open. | Extraction accuracy can be measured against a fixture corpus |
 | **Session recap generation** | Depends on a corpus of session logs existing first. | Session logs are in regular use |
 | **Plot analysis / suggestions** | Same dependency, plus a much fuzzier success criterion. | Core retrieval is trusted |
@@ -105,6 +118,12 @@ The MVP is done when all of the following hold:
 - **AC-007** Every designed screen matches the spec's tokens, spacing, and states at both
   desktop and ≤900px.
 - **AC-008** Document processing never blocks the UI.
+- **AC-009** A user signs up, logs out, logs back in, and finds their campaigns. Passwords
+  are stored only as argon2 hashes.
+- **AC-010** One user cannot read another user's campaigns, characters, or documents —
+  verified by test, not by inspection.
+- **AC-011** A password reset link works once and expires; requesting a reset for an
+  unknown address returns the same response as for a known one.
 
 ## Deliberately unresolved
 
