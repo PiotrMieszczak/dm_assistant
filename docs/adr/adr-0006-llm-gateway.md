@@ -124,4 +124,4 @@ The gateway:
   this complements; models are used here and nowhere else
 - **REF-002**: `docs/api-contract.md` — SSE streaming contract and provider endpoints
 - **REF-003**: `docs/product-brief.md` PRIN-001 — the grounding rule enforced here
-- **REF-004**: `docs/design/design-spec.md` — Settings and AI panel provider controls
+- **REF-004**: `docs/design/overview.md` — Settings and AI panel provider controls

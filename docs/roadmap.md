@@ -10,7 +10,7 @@ Phases are not dated. They are sized relative to one another and gated on eviden
 Scaffold both applications and the token system.
 
 - Vite + React 19 + TypeScript (strict) frontend; FastAPI backend
-- `tokens.css` transcribed from [design-tokens.md](design/design-tokens.md)
+- `tokens.css` transcribed from [design/reference.md](design/reference.md)
 - CSS Modules pipeline, no Tailwind ([ADR-0004](adr/adr-0004-css-modules-over-tailwind.md))
 - Radix primitives wrapped in `ui/`: Button, Input, Dialog, Tabs, Card, Chip
 - Storybook covering each primitive with its designed states
@@ -114,7 +114,7 @@ minimal risk; it can wait.
 earlier means building it against fixtures, then rebuilding it against real data.
 
 **Why design gaps block phases.** Four interactions are unspecified
-([design-spec.md](design/design-spec.md#gaps-requiring-design)). Each blocks the phase
+([design/overview.md](design/overview.md#gaps-requiring-design)). Each blocks the phase
 that needs it: upload and failure states block Phase 2, citation rendering blocks
 Phase 3, and empty states block Phase 6. Building a guess and reworking it later costs
 more than a short design pass.

@@ -16,8 +16,11 @@ project *RPG Assistant Design Spec* and the decisions recorded here.
 | 2 | [mvp-scope.md](mvp-scope.md) | What ships in v1 and what explicitly does not |
 | 3 | [data-model.md](data-model.md) | Entities, relationships, and storage |
 | 4 | [architecture.md](architecture.md) | System shape, stack, and boundaries |
-| 5 | [design/design-spec.md](design/design-spec.md) | Screens, layout, and interaction behaviour |
-| 6 | [design/design-tokens.md](design/design-tokens.md) | Colors, type, spacing, radii, shadows |
+| 5 | [design/overview.md](design/overview.md) | Screens, layout, and interaction behaviour |
+| 6 | [design/reference.md](design/reference.md) | Colors, type, spacing, radii, shadows |
+
+**▶ [Open the interactive design](https://claude.ai/code/artifact/a7d4de30-0826-4747-b295-a584fe6f0f28)** — the running prototype, and
+the source of truth for anything visual. Click through it rather than reading about it.
 | 7 | [api-contract.md](api-contract.md) | HTTP surface between frontend and backend |
 | 8 | [roadmap.md](roadmap.md) | Delivery phases and acceptance gates |
 | 9 | [adr/](adr/) | Architectural Decision Records |
@@ -29,10 +32,13 @@ work; the repository is scaffolded in a later phase (see [roadmap.md](roadmap.md
 
 ## Source of truth
 
-- **Design** — Claude Design project `ec1d38ec-c81f-42b8-8952-7a922851f405`
-  ("RPG Assistant Design Spec"), file `Referee Workspace.dc.html`. The prototype is a
-  *reference*, not production code: read it for structure, layout, and exact values.
-  Its runtime (`support.js`) is a build artifact and is never ported.
+- **Design** — the [published prototype](https://claude.ai/code/artifact/a7d4de30-0826-4747-b295-a584fe6f0f28), from Claude
+  Design project `ec1d38ec-c81f-42b8-8952-7a922851f405` ("RPG Assistant Design Spec"),
+  file `Referee Workspace.dc.html`. It is a *reference*, not production code: read it for
+  structure, layout, and exact values, and rebuild with the project's own primitives. Its
+  runtime (`support.js`) is a build artifact and is never ported.
+  The link is pinned to a published version, so the documented design does not shift
+  mid-implementation.
 - **Decisions** — anything that constrains implementation belongs in [adr/](adr/),
   not in prose scattered across these files.
 

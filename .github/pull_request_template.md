@@ -6,7 +6,7 @@
 ## Motivation and Context
 <!--- Why is this change required? What problem does it solve? -->
 <!--- If it implements part of the roadmap, link the phase. -->
-<!--- If it closes a design gap listed in docs/design/design-spec.md, say which. -->
+<!--- If it closes a design gap listed in docs/design/overview.md, say which. -->
 
 ## Related Issue / ADR
 <!--- Link any related issue. Optional - not every change needs one. -->
@@ -26,7 +26,7 @@ Closes #
 
 ## Design Fidelity
 <!--- Delete this section if the change touches no UI. -->
-<!--- The design is the source of truth. See docs/design/design-spec.md. -->
+<!--- The design is the source of truth. See docs/design/overview.md. -->
 
 - [ ] Values come from design tokens — no hardcoded hex, radii, or shadows
 - [ ] No Tailwind (see [ADR-0004](../docs/adr/adr-0004-css-modules-over-tailwind.md))

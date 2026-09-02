@@ -95,7 +95,7 @@ in `frontend/src/styles/tokens.css` and referenced by every component's `.module
 
 ## Implementation Notes
 
-- **IMP-001**: `tokens.css` is transcribed from `docs/design/design-tokens.md` and is the
+- **IMP-001**: `tokens.css` is transcribed from `docs/design/reference.md` and is the
   only file containing literal color, radius, shadow, or motion values.
 - **IMP-002**: Add a lint rule or CI check rejecting raw hex values in `.module.css`
   files outside `tokens.css`. This is what makes POS-002 real rather than aspirational
@@ -109,6 +109,6 @@ in `frontend/src/styles/tokens.css` and referenced by every component's `.module
 
 ## References
 
-- **REF-001**: `docs/design/design-tokens.md` — the token set
+- **REF-001**: `docs/design/reference.md` — the token set
 - **REF-002**: `CLAUDE.md` (workspace root) — the prohibition in CON-001
 - **REF-003**: [ADR-0001](adr-0001-react-vite-spa.md) — frontend stack this styles

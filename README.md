@@ -23,8 +23,8 @@ Start with [docs/README.md](docs/README.md).
 | [MVP scope](docs/mvp-scope.md) | What ships in v1 and what explicitly does not |
 | [Data model](docs/data-model.md) | Entities, relationships, and storage |
 | [Architecture](docs/architecture.md) | System shape, stack, and boundaries |
-| [Design spec](docs/design/design-spec.md) | Screens, layout, and interaction behaviour |
-| [Design tokens](docs/design/design-tokens.md) | Colors, type, spacing, radii, shadows |
+| [Design spec](docs/design/overview.md) | Screens, layout, and interaction behaviour |
+| [Design tokens](docs/design/reference.md) | Colors, type, spacing, radii, shadows |
 | [API contract](docs/api-contract.md) | HTTP surface between frontend and backend |
 | [Roadmap](docs/roadmap.md) | Delivery phases and acceptance gates |
 | [ADRs](docs/adr/) | Architectural Decision Records |
@@ -46,10 +46,16 @@ See [ADR-0001](docs/adr/adr-0001-react-vite-spa.md) for the stack rationale.
 
 ## Design
 
-The interface is defined by a high-fidelity design that is the source of truth for
-layout, tokens, and interaction. The prototype is a **reference**, not production code —
-its values are transcribed into design tokens and its markup is rebuilt with the
-project's own primitives.
+**▶ [Open the interactive design](https://claude.ai/code/artifact/a7d4de30-0826-4747-b295-a584fe6f0f28)**
+
+The running prototype, and the source of truth for layout, tokens, and interaction. Click
+through it — login, campaign picker, the workspace views, the graph, and the mobile shell
+below 900px. Interaction is most of what this design specifies, so a screenshot would
+convey little of it.
+
+It is a **reference, not production code**: values are transcribed into
+[design tokens](docs/design/reference.md) and markup is rebuilt with the project's own
+primitives.
 
 ## Two ideas worth knowing up front
 

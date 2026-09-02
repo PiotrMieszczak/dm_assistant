@@ -1,11 +1,34 @@
-# Design Spec
+# Design
 
-Screens, layout, and behaviour. Values live in [design-tokens.md](design-tokens.md).
+Screens, layout, and behaviour. Exact values live in [reference.md](reference.md).
 
-**Source.** Claude Design project `ec1d38ec-c81f-42b8-8952-7a922851f405`, file
-`Referee Workspace.dc.html`. Fidelity is **high** — colors, type, spacing, and interaction
-states are final as shown. The prototype is a reference; its runtime is never reused
-(BND-004).
+## The prototype
+
+**▶ [Open the interactive design](https://claude.ai/code/artifact/a7d4de30-0826-4747-b295-a584fe6f0f28)**
+
+This is the source of truth. It is the running prototype, not a picture of one — click
+through the login and campaign picker into the workspace, switch views from the nav rail,
+hover a graph node, toggle the assistant panel, and resize below 900px to see the mobile
+shell.
+
+Prefer it over any screenshot. A screenshot captures one frame of one state and goes stale
+silently; the prototype shows current behaviour, and interaction is most of what this
+design specifies.
+
+Two things to know about the link:
+
+- It is **pinned to a published version**. Republishing the design does not change what
+  this link shows until the share pin is moved — deliberate, so the documented design
+  cannot shift underfoot mid-implementation.
+- Fidelity is **high**. Colors, type, spacing, and interaction states are final as shown.
+
+**Do not port the prototype's code.** It is a `.dc.html` reference with an inline runtime;
+read it for structure, layout, and exact values only, and rebuild with the project's own
+primitives (BND-004). Its values are transcribed into [reference.md](reference.md), which
+is what implementation should follow.
+
+Source project: Claude Design `ec1d38ec-c81f-42b8-8952-7a922851f405`, file
+`Referee Workspace.dc.html`.
 
 ## Screen model
 
