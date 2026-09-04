@@ -1,5 +1,9 @@
 # Architecture
 
+The same diagrams are on a Miro board — **[open the architecture board](https://miro.com/app/board/uXjVHrcVIJQ=/)** — which is
+easier to walk someone through than a page of Mermaid. This file stays the source of
+truth; the board mirrors it.
+
 ## Shape
 
 ```mermaid

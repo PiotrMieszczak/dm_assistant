@@ -57,6 +57,15 @@ It is a **reference, not production code**: values are transcribed into
 [design tokens](docs/design/reference.md) and markup is rebuilt with the project's own
 primitives.
 
+## Architecture at a glance
+
+**▶ [Open the architecture board](https://miro.com/app/board/uXjVHrcVIJQ=/)**
+
+A Miro board with the system shape and both data flows — ingestion and retrieval —
+mirroring [docs/architecture.md](docs/architecture.md). Useful for walking someone through
+the two boundaries that define this system: extraction never calls a model, and every
+model call goes through one gateway.
+
 ## Two ideas worth knowing up front
 
 **Extraction never uses a language model.** Parsing is deterministic, so the index
@@ -69,9 +78,3 @@ vector store in v1 — each has a written condition that would justify adding it
 instrumentation to detect that condition is part of the work.
 See [ADR-0003](docs/adr/adr-0003-sqlite-single-store.md) and
 [ADR-0005](docs/adr/adr-0005-fts5-before-vectors.md).
-
-## Relationship to referee-assistant
-
-This project replaces the `referee-assistant` proof of concept. The POC's architecture,
-agent model, and technical guides are **not** carried forward — only the product intent
-and the design that came out of it.

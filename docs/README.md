@@ -21,6 +21,9 @@ project *RPG Assistant Design Spec* and the decisions recorded here.
 
 **▶ [Open the interactive design](https://claude.ai/code/artifact/a7d4de30-0826-4747-b295-a584fe6f0f28)** — the running prototype, and
 the source of truth for anything visual. Click through it rather than reading about it.
+
+**▶ [Open the architecture board](https://miro.com/app/board/uXjVHrcVIJQ=/)** — the system shape and both
+data flows on a Miro board, mirroring [architecture.md](architecture.md).
 | 7 | [api-contract.md](api-contract.md) | HTTP surface between frontend and backend |
 | 8 | [roadmap.md](roadmap.md) | Delivery phases and acceptance gates |
 | 9 | [adr/](adr/) | Architectural Decision Records |
