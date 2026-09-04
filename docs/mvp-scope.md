@@ -49,7 +49,7 @@ The differentiating capability. Upload → extract → index → retrieve.
 
 ### Assistant — Full
 
-- Chat panel with streaming responses
+- Chat panel streaming [AG-UI](https://docs.ag-ui.com/) events over SSE ([ADR-0009](adr/adr-0009-ag-ui-protocol.md))
 - Retrieval grounded in the active campaign's indexed chunks, with citations
 - LLM Gateway abstracting provider; Ollama and Claude both selectable at runtime
 - Tool-call indicator chips (the design's green check rows) for retrieval steps
@@ -92,10 +92,11 @@ Rendered from real relationship data, not mock data.
 
 | Item | Why | Revisit when |
 |------|-----|--------------|
-| **Neo4j / graph database** | Relationship counts at single-campaign scale are trivial for SQLite. A dedicated graph DB is operational weight with no payoff yet. See [ADR-0003](adr/adr-0003-sqlite-single-store.md). | Graph queries exceed 2 hops or performance degrades |
+| **Neo4j / graph database** | The domain is graph-shaped, but the *queries* are not — every one the design asks for is zero or one hop. A graph DB earns its cost on deep traversal, which nothing here does. See [ADR-0003 ALT-011](adr/adr-0003-sqlite-single-store.md). | Graph queries exceed 2 hops, or edge counts make the graph endpoint slow |
 | **Vector search / embeddings** | FTS5 keyword retrieval is the honest first attempt. Add semantic search when keyword search is demonstrably insufficient — measured, not assumed. See [ADR-0005](adr/adr-0005-fts5-before-vectors.md). | Retrieval quality measurably fails on paraphrased queries |
 | **OCR for scanned PDFs** | Native-text PDFs cover the common case. OCR adds a heavy dependency chain. The design's `Queued` + "awaiting OCR" state is built; the processor is not. | Users upload scanned material in practice |
 | **Multi-agent orchestration** | One assistant with retrieval tools is simpler and easier to evaluate than five agents behind an intent router. | A single agent measurably underperforms on distinct task types |
+| **AG-UI beyond streaming** | Sub-agent composition, agent steering, generative UI, and shared-state sync are unused. The protocol is adopted for streaming only. | A second agent, or the UI needs to steer a running one |
 | **Managed auth provider (Supabase, Clerk)** | Auth is built by hand deliberately — the project is a learning exercise, and a provider hides the mechanism. See [ADR-0008](adr/adr-0008-own-auth-v1.md). | The maintenance burden outgrows its teaching value |
 | **Automatic entity extraction from PDFs** | Auto-creating NPCs from a module is attractive and unreliable. Manual entry first; the extraction path stays open. | Extraction accuracy can be measured against a fixture corpus |
 | **Session recap generation** | Depends on a corpus of session logs existing first. | Session logs are in regular use |

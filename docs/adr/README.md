@@ -16,6 +16,7 @@ knowing why it was made, it belongs in an ADR.
 | [0006](adr-0006-llm-gateway.md) | Centralized LLM Gateway with runtime provider switching | Accepted |
 | [0007](adr-0007-local-profile-auth.md) | Local profile in v1; Supabase Auth when hosting arrives | Superseded |
 | [0008](adr-0008-own-auth-v1.md) | Build authentication by hand in v1 | Accepted |
+| [0009](adr-0009-ag-ui-protocol.md) | AG-UI protocol for assistant streaming | Accepted |
 
 ## Format
 

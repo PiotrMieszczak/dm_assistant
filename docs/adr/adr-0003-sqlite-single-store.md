@@ -79,6 +79,16 @@ No Neo4j. No separate vector database. No external database server.
   feature whose queries are one hop deep over a few hundred edges. Introduces
   cross-store consistency burden with no capability gain at this scale. Contradicts
   local-first (CON-001).
+- **ALT-011**: **A graph-shaped domain does not imply a graph database.** This is the
+  argument that keeps resurfacing, so it is worth stating plainly. Characters, factions,
+  and their edges genuinely form a graph — but what selects a database is the shape of the
+  **queries**, not the shape of the data. Every query the design asks for is zero or one
+  hop: render all nodes and edges for a campaign (`SELECT * FROM relationship WHERE
+  campaign_id = ?`), list one entity's direct connections, highlight nodes matching a
+  search. A graph database earns its cost on deep traversal — "everyone within three
+  degrees of the Pale Court, weighted by relationship kind" — which is a painful recursive
+  CTE in SQL and a one-line Cypher query. Nothing in this product asks that. Until
+  something does, a graph database buys syntax, not capability.
 
 ### PostgreSQL as a single store
 

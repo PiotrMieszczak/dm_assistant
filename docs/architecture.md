@@ -69,6 +69,7 @@ place a model is invoked.
 | Storage | SQLite + FTS5 | [ADR-0003](adr/adr-0003-sqlite-single-store.md) |
 | Extraction | PyMuPDF, pdfplumber | Deterministic; [ADR-0002](adr/adr-0002-deterministic-extraction.md) |
 | LLM access | Gateway over Ollama + Claude | [ADR-0006](adr/adr-0006-llm-gateway.md) |
+| Assistant streaming | AG-UI protocol over SSE | [ADR-0009](adr/adr-0009-ag-ui-protocol.md) |
 | Testing | Vitest + Testing Library, Playwright, pytest | |
 
 ## Repository layout
@@ -180,6 +181,11 @@ import path to `gateway/`. A test asserts this.
 
 **BND-003 — Campaign scoping is enforced server-side.** Every query filters by
 `campaign_id`. The frontend never sees another campaign's data.
+
+**BND-005 — Provider streams are normalised inside the Gateway.** Model-provider event
+shapes never reach the wire; the Gateway converts them to AG-UI events, so switching
+providers cannot change what the frontend sees
+([ADR-0009](adr/adr-0009-ag-ui-protocol.md)).
 
 **BND-004 — The design prototype is never imported.** `Referee Workspace.dc.html` and
 `support.js` are references. Values are transcribed into tokens; markup is rebuilt.

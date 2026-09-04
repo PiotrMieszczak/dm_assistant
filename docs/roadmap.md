@@ -61,7 +61,7 @@ Retrieval becomes conversation.
 - LLM Gateway with Ollama and Claude behind one interface
   ([ADR-0006](adr/adr-0006-llm-gateway.md))
 - Grounded prompting: retrieved context, refusal when context is insufficient
-- SSE streaming with token, tool, and citation events
+- AG-UI event streaming over SSE ([ADR-0009](adr/adr-0009-ag-ui-protocol.md)); citations as a namespaced `dm.citation` custom event
 - AI panel: bubbles, tool chips, streaming cursor, typing dots, quick prompts, composer
 - Provider switching from Settings, effective without restart
 - Citation rendering — requires the design gap to be closed first

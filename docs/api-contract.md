@@ -201,25 +201,49 @@ retrievable alongside documents.
 | `GET` | `/campaigns/{cid}/conversations/{id}/messages` | History with citations |
 | `POST` | `/campaigns/{cid}/conversations/{id}/messages` | Send; responds as SSE |
 
-**Streaming response.** `text/event-stream`:
+**Streaming response.** `text/event-stream`, carrying
+[AG-UI](https://docs.ag-ui.com/concepts/events) events
+([ADR-0009](adr/adr-0009-ag-ui-protocol.md)). The protocol defines the event schema; this
+contract documents only what is product-specific.
 
 ```
-event: tool
-data: {"label":"Searched 3 documents"}
+event: RunStarted
+data: {"threadId":"conv-12","runId":"run-88"}
 
-event: token
-data: {"text":"Opportunity attacks trigger when"}
+event: ToolCallStart
+data: {"toolCallId":"t1","toolCallName":"search_documents"}
 
-event: citation
-data: {"chunkId":812,"documentId":1,"filename":"Core Rulebook v3.pdf","pageFrom":195}
+event: ToolCallResult
+data: {"toolCallId":"t1","content":"3 documents searched, 5 chunks"}
 
-event: done
-data: {"messageId":57}
+event: TextMessageStart
+data: {"messageId":"m-57","role":"assistant"}
+
+event: TextMessageContent
+data: {"messageId":"m-57","delta":"Opportunity attacks trigger when"}
+
+event: Custom
+data: {"name":"dm.citation","value":{"chunkId":812,"documentId":1,
+       "filename":"Core Rulebook v3.pdf","pageFrom":195}}
+
+event: TextMessageEnd
+data: {"messageId":"m-57"}
+
+event: RunFinished
+data: {"threadId":"conv-12","runId":"run-88","outcome":"success"}
 ```
 
-`tool` events drive the green check chips. `citation` events populate source references
-(AC-002). When retrieval finds nothing relevant, the assistant says so explicitly rather
-than answering unsourced (AC-003).
+**Citations are a custom event.** AG-UI has no citation type — grounding is a product
+concern, not a protocol one — so they are emitted as a namespaced `dm.citation` custom
+event. That keeps the product-specific part visibly distinct from the protocol.
+
+Tool-call events drive the design's green check chips. Citation events populate source
+references (AC-002). When retrieval finds nothing relevant, the assistant says so
+explicitly rather than answering unsourced (AC-003).
+
+A stream always opens with `RunStarted` and closes with exactly one of `RunFinished` or
+`RunError`. A stream ending without either is a bug: the client cannot tell it from a
+dropped connection.
 
 ## Settings
 
