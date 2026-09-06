@@ -22,6 +22,12 @@ erDiagram
     REGION ||--o{ REGION : "contains"
     REGION ||--o{ CHARACTER : "is where"
 
+    CAMPAIGN ||--o{ FRONT : "has moving"
+    CAMPAIGN ||--o{ CLUE : "holds"
+    FRONT ||--o{ FRONT_STEP : "counts down"
+    ADVENTURE ||--o{ CLUE : "may scope"
+    SCENE }o--o{ CLUE : "can surface"
+
     ADVENTURE ||--o{ HOOK : "offers"
     ADVENTURE ||--o{ SCENE : "made of"
     ADVENTURE ||--o{ QUEST : "spawns"
@@ -186,18 +192,34 @@ acts, NPCs, rewards.
 | `level_range` | text? | "3–5"; free-form, systems differ |
 | `expected_sessions` | int? | Rough length |
 | `region_id` | int? FK | Where it takes place |
+| `structure` | enum | How PCs move between scenes — see below |
 | `notes` | text? | GM-private |
 | `tags` | json | `["Intrigue","Urban"]` |
 
-**`hook`** — the reasons a party might get involved. Published modules carry two to four,
-each aimed at a different motivation, so a GM can pick the one that fits their table.
+**`structure`** distinguishes two families a GM prepares very differently:
+
+| Family | Values | Prep it needs |
+|--------|--------|---------------|
+| **Procedural** — emergent | `dungeon_crawl` \| `hex_crawl` \| `point_crawl` \| `node_based` | Flexible **tools**: maps, tables, clue lists |
+| **Story-driven** — directed | `linear` \| `branching` \| `mystery` | Prepared **plans**: outlines, scripts, set pieces |
+
+An adventure may blend or nest them, so this is the dominant shape rather than an exclusive
+category.
+
+**`hook`** — a dramatic challenge the party is motivated to take on. Hooks are the
+adventure's *objectives*, not merely its opening.
 
 | Field | Type | Notes |
 |-------|------|-------|
 | `id` | int PK | |
 | `adventure_id` | int FK | |
-| `text` | text | "Kessel's writ names the party as investigators" |
-| `motivation` | text? | "Duty", "Greed", "Revenge" — what kind of character it catches |
+| `text` | text | "Recover the Envoy's cipher before the Court does" |
+| `kind` | enum | `combat` \| `exploration` \| `investigation` \| `social` |
+| `is_proactive` | bool | Proactive hooks come looking for the PCs; reactive ones must be found |
+| `motivation` | text? | "Duty", "Greed" — which characters it catches |
+
+**`kind`** matters for balance. Four combat hooks and nothing social produces a narrow
+adventure, and the tag makes that visible without reading each one.
 
 **`scene`** — the beats an adventure is made of. Ordered, but a GM runs them in whatever
 order the table produces.
@@ -208,19 +230,26 @@ order the table produces.
 | `adventure_id` | int FK | |
 | `ordinal` | int | Suggested order |
 | `title` | text | "Smoke over Riverside" |
-| `purpose` | enum | `hook` \| `complication` \| `setback` \| `climax` \| `payoff` |
+| `purpose` | text? | Free-form beat label — see templates below |
 | `summary` | text? | What happens, in a line |
 | `read_aloud` | text? | Boxed text |
 | `gm_notes` | text? | GM-private: what can go wrong, what the NPCs want |
 | `region_id` | int? FK | Where it happens |
 | `is_optional` | bool | Skippable if time runs short |
 
-**`purpose` follows the Five Room Dungeon**, a widely-used structure where each beat has a
-job: hook the party, complicate, deepen with a setback, confront, then make it matter. It
-is deliberately **not** about rooms — the same five beats structure urban intrigue and
-investigation as well as dungeons, which is why the entity is `scene` rather than `room`.
-The enum is a prompt, not a constraint: an adventure may have three scenes or nine, and
-several may share a purpose.
+**`purpose` is free text, not an enum**, because the useful beat labels differ by template:
+
+| Template | Beats |
+|----------|-------|
+| **Five-Room Dungeon** | Entrance · Obstacle · Setback · Climax · Reward |
+| **Five-Node Mystery** | Hook · three POIs · Reveal |
+| **The Quest** | Hook · Acquisition · Challenges · Complications · Closure |
+
+Templates are *starting points a GM outlines from*, not a schema. Constraining `purpose` to
+one template's vocabulary would have made the other two awkward to express.
+
+Scenes are called scenes, not rooms, deliberately: the same structures drive urban intrigue
+and investigation, not only dungeons.
 
 **Joins**
 
@@ -229,8 +258,65 @@ several may share a purpose.
 | `adventure_character` | Which NPCs appear, with a `role` note ("the client", "the twist") |
 | `adventure_faction` | Which factions are involved and how |
 | `scene_character` | Which NPCs are present in a given scene |
+| `scene_clue` | Which clues *can* surface in a scene — many-to-many, deliberately |
 
 Quests gain `adventure_id` (nullable) so a quest can belong to an adventure or stand alone.
+
+### Front
+
+**Adventures are born from the movement of fronts** — goal-oriented threats that advance
+whether or not the PCs engage. A front belongs to the campaign, not to one adventure: it
+is what makes a world feel like it is moving.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | int PK | |
+| `campaign_id` | text FK | |
+| `name` | text | "The Pale Court's search for the cipher" |
+| `kind` | enum | `threat` \| `asset` — an allied faction works the same way, with assets instead of dangers |
+| `goal` | text | What it is driving toward |
+| `stakes` | text? | The open question: how will this land on the PCs or the world? |
+| `status` | enum | `looming` \| `active` \| `resolved` \| `averted` |
+| `notes` | text? | GM-private |
+
+**`front_step`** — the timeline. A countdown clock: what happens next if nobody stops it.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | int PK | |
+| `front_id` | int FK | |
+| `ordinal` | int | Sequence |
+| `text` | text | "The Watch captain is replaced" |
+| `is_done` | bool | Ticked when it happens at the table |
+| `trigger` | text? | What advances it, if not simply time |
+
+Fronts link to characters and factions through `front_participant`, so "who is behind this"
+is queryable and shows up in the knowledge graph.
+
+A simple threat needs only a goal and a three-step timeline — the model should not demand
+more than that to be useful.
+
+### Clue
+
+**Clues are not owned by a scene.** They are discrete pieces of information that can surface
+anywhere, and binding one to a single location is how a party gets stuck.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | int PK | |
+| `campaign_id` | text FK | |
+| `adventure_id` | int? FK | Null for campaign-wide secrets |
+| `text` | text | "The cipher was moved before the fire" |
+| `reveals` | text? | The secret it points to — used to group clues |
+| `is_essential` | bool | Marks a narrative chokepoint |
+| `is_revealed` | bool | Ticked when the party learns it |
+
+**The three-clue rule.** Any secret the adventure depends on needs **at least three** clues
+pointing at it, because players miss things. `is_essential` plus grouping by `reveals` makes
+that checkable: the UI can warn when an essential secret has fewer than three routes to it.
+
+This is why `scene_clue` is many-to-many. A clue that can only appear in one place is the
+failure the rule exists to prevent.
 
 ### Document and Chunk
 
@@ -352,15 +438,34 @@ columns and duplicate every relationship. `is_notable` then answers a different 
 from `parent_region_id`: not *where does this sit* but *is this worth surfacing*. Depth in a
 tree is a poor proxy for importance.
 
-**DEC-007 — Scenes, not rooms.**
-The Five Room Dungeon structure is about narrative beats, not floor plans — it works for
-urban intrigue and investigation as well as dungeon crawls. Naming the entity `room` would
-have quietly excluded most of what a game master actually runs.
+**DEC-007 — Scenes, not rooms; and both prep families are first-class.**
+Adventure structures split into *procedural* (dungeon, hex, point, node crawls — emergent,
+needing flexible tools) and *story-driven* (linear, branching, mystery — directed, needing
+prepared plans). An earlier draft modelled only the second: ordered scenes with read-aloud
+text is plan-shaped. `adventure.structure` restores the first, and scenes are named for
+narrative beats rather than floor plans because the same shapes drive urban intrigue and
+investigation.
 
 **DEC-008 — `read_aloud` and `notes` are separate fields, everywhere they appear.**
 Published modules distinguish boxed text (read to players) from GM-facing detail (what is
 really happening). Merging them risks reading a secret aloud, which is unrecoverable at the
 table. This extends DEC-004's private-notes convention rather than inventing a new one.
+
+**DEC-009 — Clues are campaign-level and many-to-many with scenes.**
+The three-clue rule exists because players miss things: any essential secret needs at least
+three routes to it. A clue owned by one scene is exactly the single point of failure that
+rule guards against, so `scene_clue` is a join and `is_essential` makes the check
+mechanical.
+
+**DEC-010 — Fronts belong to the campaign, not to an adventure.**
+A front advances whether or not the PCs engage, and the same threat drives several
+adventures. Modelling it under Adventure would end when the adventure did, which is the
+opposite of what makes a world feel alive.
+
+**DEC-011 — Scene `purpose` is free text, not an enum.**
+Three common templates use three different beat vocabularies. An enum would have privileged
+one and made the others awkward, and templates are prompts for a GM outlining, not a schema
+to conform to.
 
 **DEC-004 — GM notes are private by construction.**
 `notes` on characters and factions hold spoilers ("Do not reveal before Session 15").

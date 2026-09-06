@@ -87,13 +87,28 @@ improvises freely within it.
 **Nothing said in character is canon** unless the GM explicitly saves it to the character's
 notes or a session record.
 
-### The rule that ties them together
+### A mode is a bundle, not just a prompt
 
-| Mode | Invention | Where | Output becomes campaign data |
-|------|-----------|-------|------------------------------|
-| **Research** | Never | Side panel | No — answers only |
-| **Creative** | The point | Its own page | Via proposal + confirm |
-| **In character** | Within one voice | Panel, restyled as the NPC | Only if explicitly saved |
+Each mode is a **profile**: prompt, sampling parameters, tool set, and model preference.
+Prompting alone does not make grounding reliable — a model at high temperature will
+embellish despite being told not to.
+
+| | Research | Creative | In character |
+|---|---|---|---|
+| **Invention** | Never | The point | Within one voice |
+| **Temperature** | **0** | 0.8–1.0 | 0.7–0.9 |
+| **Tools** | `search_documents`, `get_*` | `get_*`, `propose_*` | `get_character` only |
+| **Model** | Cheaper is fine | Prefer the stronger one | Either |
+| **Where** | Side panel | Its own page | Panel, restyled as the NPC |
+| **Output reaches campaign data** | No — answers only | Via proposal + confirm | Only if explicitly saved |
+
+**Temperature 0 in Research mode is load-bearing.** It makes answers near-deterministic —
+the same question against the same sources gives the same answer — which is what makes
+citations verifiable and refusals consistent rather than occasional. A grounding prompt at
+temperature 0.8 is a suggestion; at 0 it is close to a constraint.
+
+**Creative mode wants the opposite.** Low temperature produces the obvious idea, which is
+the one the GM already had. Variety is the value.
 
 **`PRIN-001` is scoped, not weakened.** It stops being a product-wide rule and becomes the
 defining rule of Research mode. That is a stronger position than before: previously
@@ -174,9 +189,12 @@ someone asked for an adventure.
 
 ## Implementation Notes
 
-- **IMP-001**: The Gateway ([ADR-0006](adr-0006-llm-gateway.md)) holds **three** prompt
-  strategies, not one. Each is constructed in exactly one place, as the grounding prompt
-  already is.
+- **IMP-001**: The Gateway ([ADR-0006](adr-0006-llm-gateway.md)) holds **three mode
+  profiles**, not one prompt. A profile is prompt + temperature + tool set + model
+  preference, defined in exactly one place and selected by mode.
+- **IMP-001a**: Research mode runs at **temperature 0**. This is not a tuning preference —
+  it is what makes AC-003's refusal behaviour consistent rather than probabilistic. Test
+  refusal at the temperature that ships.
 - **IMP-002**: Research mode's prompt is unchanged and remains the strictest: answer only
   from context, state plainly when context is insufficient.
 - **IMP-003**: Creative mode's prompt states that output is a draft for a game master,

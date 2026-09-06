@@ -40,6 +40,24 @@ A GM sits down between sessions to build an adventure. This is authoring, not
 lookup: it needs room to write, iterate, and see structure. That is why it is a page
 and not the side panel.
 
+## The workflow to support
+
+Experienced GMs prepare in a known order. The page should follow it, so a GM lands in
+something that guides them rather than a grid of empty fields:
+
+1. **Review the characters** — what do the players care about right now?
+2. **Create a strong start** — the opening scene, with action, roleplay, or mystery
+3. **Outline potential scenes** — roughly 1–2 per hour of play
+4. **Define secrets and clues** — around 10, NOT tied to any one scene. Any essential
+   secret needs at least three different clues pointing at it, because players miss things
+5. **Develop interesting locations** — evocative titles, three unique aspects each
+6. **Outline important NPCs** — description, one personality quirk, connection to the plot
+7. **Choose relevant monsters**
+8. **Select rewards** — treasure, information, and hooks into the next adventure
+
+Steps 4 and 5 are where most tools fail. Clues get buried inside scene descriptions, which
+is exactly how a party gets stuck.
+
 ## Structure to render
 
 An adventure has:
@@ -51,12 +69,35 @@ An adventure has:
 - SCENES — the beats it is made of. Each has a title, a purpose, a summary,
   READ-ALOUD text (spoken at the table), and GM NOTES (private). Scenes can be
   marked optional.
+- CLUES — discrete pieces of information, deliberately NOT owned by a scene. A clue
+  can surface in several places. Clues that point at an essential secret need at
+  least three routes, and the page should show when one has fewer.
+- FRONTS — the threats moving in the background: what they want, and a countdown of
+  what happens next if nobody stops them. Fronts belong to the campaign and drive
+  several adventures, so this is a link, not an edit surface.
 - Cast — which NPCs and factions appear, each with a role note
 
-Scene purposes follow a well-known structure where each beat has a job:
-HOOK, COMPLICATION, SETBACK, CLIMAX, PAYOFF. Show the purpose on each scene so the
-shape of the adventure is readable at a glance — a GM should see "I have three
-complications and no payoff" without reading.
+Adventures come in two families, and a GM prepares them very differently:
+
+- PROCEDURAL (dungeon crawl, hexcrawl, point crawl, node-based) — emergent. Needs
+  flexible tools: maps, tables, clue lists.
+- STORY-DRIVEN (linear, branching, mystery) — directed. Needs plans: outlines,
+  set pieces.
+
+The page must serve both. A design that only supports an ordered list of scenes
+handles the second and fails the first.
+
+Common templates a GM outlines from — offer them, do not enforce them:
+- Five-Room Dungeon: Entrance, Obstacle, Setback, Climax, Reward
+- Five-Node Mystery: Hook, three points of interest, Reveal
+- The Quest: Hook, Acquisition, Challenges, Complications, Closure
+
+Show each scene's beat label so the adventure's shape is readable at a glance — a GM
+should see "three complications and no payoff" without reading.
+
+Hooks are dramatic challenges, categorised COMBAT / EXPLORATION / INVESTIGATION /
+SOCIAL. Show the mix, so an adventure that is four combats and nothing else is
+visible as such.
 
 ## The critical distinction to design
 
@@ -82,6 +123,8 @@ mechanic.
 
 1. Adventure list — existing adventures, with status and a create affordance
 2. Adventure editor — the main screen, all of the above
+2b. The clue board — all clues for this adventure, which secret each points to, and
+    a clear warning where an essential secret has fewer than three clues
 3. Empty state — a new adventure with nothing in it yet. This is where a GM most
    needs the AI, so make the offer of help prominent rather than an afterthought.
 4. An AI proposal in place — showing a generated hook or scene awaiting acceptance
@@ -117,6 +160,13 @@ amber, professional blue, neutral grey).
 
 ## Why the prompt says what it says
 
+**The whole brief is calibrated against the
+[X&K Adventure Design Cheat Sheet](https://www.reddit.com/r/rpg/comments/14a2h61/)**, which
+synthesises Justin Alexander, Sly Flourish, Matt Colville, Dungeon World, and others. Its
+governing principle — *"prepare situations, not plots"* and *"prioritise flexible tools over
+excessive plans"* — is why the page must support procedural structures and not only ordered
+scenes.
+
 **"Visibly different from the Research panel."** The mode separation is the safety property
 in [ADR-0012](../adr/adr-0012-two-ai-modes.md). If Creative mode looks identical to Research
 mode, a GM has to remember which they are in — the failure the whole design avoids.
@@ -129,10 +179,18 @@ rather than a label.
 [ADR-0011](../adr/adr-0011-assistant-tools.md). No AI output reaches campaign data without
 confirmation, and this page is where that interaction is most visible.
 
-**"Scene purposes: hook, complication, setback, climax, payoff."** The
-[Five Room Dungeon](https://www.roleplayingtips.com/5-room-dungeons/) structure, widely used
-because each beat has a defined job. Deliberately about narrative beats rather than rooms,
-so it fits urban intrigue and investigation as well as dungeons (DEC-007).
+**Templates offered, not enforced.** Three common ones use three different beat
+vocabularies, so a fixed set would privilege one. They are prompts for a GM outlining, not a
+schema (DEC-011).
+
+**"Clues NOT owned by a scene."** The three-clue rule: any essential secret needs at least
+three routes to it, because players miss things. A clue buried in one scene's description is
+the single point of failure that rule exists to prevent (DEC-009). The clue board makes the
+check visible rather than leaving it to the GM to remember.
+
+**"Fronts are a link, not an edit surface."** A front advances whether or not the PCs engage
+and drives several adventures, so it belongs to the campaign (DEC-010). Editing it from
+inside one adventure would imply it ends when that adventure does.
 
 **"Not a form."** The GM is writing. A settings-page treatment of an authoring surface is
 the most likely way this page comes out wrong.
