@@ -68,6 +68,11 @@ Retrieval becomes conversation.
 - The tool loop: search, session fetch, entity fetch, and `propose_*`
   ([ADR-0011](adr/adr-0011-assistant-tools.md)), bounded and hand-written
 - Proposal form in chat — an editable, source-cited draft. Blocked on the design gap
+- **Research mode** in the side panel — the grounded behaviour above
+- **Creative mode** as its own page, campaign-aware, output via proposals. Blocked on
+  design (the page does not exist in the spec)
+- **In-character mode** opened from a character, with the panel restyled as that NPC
+  ([ADR-0012](adr/adr-0012-two-ai-modes.md))
 
 **Exit gate.** AC-002, AC-003, AC-004, AC-012, AC-013, AC-014 — grounded answers with
 visible citations, explicit refusal on unindexed topics, live provider switching, session

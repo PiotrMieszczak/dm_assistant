@@ -71,6 +71,7 @@ place a model is invoked.
 | LLM access | Gateway over Ollama + Claude | [ADR-0006](adr/adr-0006-llm-gateway.md) |
 | Assistant streaming | AG-UI protocol over SSE | [ADR-0009](adr/adr-0009-ag-ui-protocol.md) |
 | Agent loop | Plain FastAPI — no framework, bounded tool loop | [ADR-0011](adr/adr-0011-assistant-tools.md) |
+| AI modes | Research (grounded) · Creative (invents) · In character | [ADR-0012](adr/adr-0012-two-ai-modes.md) |
 | Testing | Vitest + Testing Library, Playwright, pytest | |
 
 ## Repository layout
@@ -283,6 +284,12 @@ import path to `gateway/`. A test asserts this.
 `api/assistant.py`, bounded to a fixed number of iterations. A framework there would also
 own prompt assembly, moving the grounding rule out of the single place that enforces it
 ([ADR-0011](adr/adr-0011-assistant-tools.md)).
+
+**BND-008 — Modes are separate surfaces, and the Gateway holds three prompts.** Research,
+Creative, and in-character each have one prompt strategy, each built in exactly one place.
+Creative and in-character output is **never indexed** — otherwise invention becomes
+retrievable as fact, defeating [ADR-0002](adr/adr-0002-deterministic-extraction.md) from
+the other direction ([ADR-0012](adr/adr-0012-two-ai-modes.md)).
 
 **BND-007 — No tool writes to the campaign.** `propose_*` tools return drafts; the GM
 confirms through the ordinary create endpoints. A test asserts no proposal tool is

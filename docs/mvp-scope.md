@@ -49,7 +49,20 @@ The differentiating capability. Upload → extract → index → retrieve.
 
 ### Assistant — Full
 
+Three modes, deliberately separate ([ADR-0012](adr/adr-0012-two-ai-modes.md)). The
+separation is the safety property: a GM must never have to infer whether something was
+retrieved or invented.
+
+| Mode | Where | Invention |
+|------|-------|-----------|
+| **Research** | Side panel, every screen | Never — cites sources, refuses when unsupported |
+| **Creative** | Its own page | The point — campaign-aware, output is a draft |
+| **In character** | Panel, opened from a character | Within one voice; never canon unless saved |
+
+
 - Chat panel streaming [AG-UI](https://docs.ag-ui.com/) events over SSE ([ADR-0009](adr/adr-0009-ag-ui-protocol.md))
+- A **Creative page** for drafting adventures, NPCs, factions, regions, and dialogue
+- **In-character chat** entered from a character page, with their portrait in the header
 - Retrieval grounded in the active campaign's indexed chunks, with citations
 - LLM Gateway abstracting provider; Ollama and Claude both selectable at runtime
 - Tool-call indicator chips (the design's green check rows) for every tool that runs
@@ -138,6 +151,12 @@ The MVP is done when all of the following hold:
   Nothing appears in the NPC list until the GM confirms.
 - **AC-014** Each populated field in a proposal cites the chunk it came from; a field with
   no source is marked as unsourced rather than presented as extracted.
+- **AC-015** Research mode refuses an unsupported question; Creative mode answers the same
+  question by inventing. The two are reachable only from their own surfaces.
+- **AC-016** Every message records which mode produced it, and the mode is visible in the
+  interface at the time — not inferable only from the text.
+- **AC-017** Creative and in-character output is never indexed. Asking Research mode about
+  something only invented in Creative mode returns "not in your material".
 
 ## Deliberately unresolved
 

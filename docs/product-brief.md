@@ -19,11 +19,23 @@ books, which is worse than useless at the table.
 
 ## The product
 
-DM Assistant keeps campaign material indexed and puts an assistant next to it that
-answers **only** from what has been indexed. The GM asks in natural language; the answer
-is grounded in their own documents, with the source visible.
+DM Assistant helps a game master **build** a campaign and **run** it, with an AI that does
+both jobs without confusing them.
 
-Around that core sits the session-running workspace the design defines: NPCs, players,
+Two modes, deliberately separate ([ADR-0012](adr/adr-0012-two-ai-modes.md)):
+
+**Research** — the side panel, available while you work. It behaves like NotebookLM:
+answers **only** from your indexed material, cites the source, and says plainly when your
+documents do not cover the question. This is where you ask rules questions mid-session.
+
+**Creative** — its own page. Draft adventures, NPCs, factions, regions, and dialogue. It
+knows your campaign, so new content fits the world it is joining. Everything it produces is
+a **draft you confirm**, never a silent write.
+
+A third mode, **in character**, opens from any character: their portrait and name replace
+the assistant's, their sheet and notes become context, and you talk to them directly.
+
+Around all of it sits the session-running workspace the design defines: NPCs, players,
 factions, a quest log, session records, and a knowledge graph of how everyone relates.
 
 ### Who it is for
@@ -41,10 +53,18 @@ virtual tabletop, not a campaign-sharing platform.
 
 ## Product principles
 
-**PRIN-001 — Grounded, never inventive about facts.**
-The assistant answers from indexed material. When material does not cover a question, it
-says so rather than filling the gap. Creative help (drafting a scene, voicing an NPC) is
-clearly distinct from factual retrieval.
+**PRIN-001 — Research mode is grounded and never invents.**
+In Research mode the assistant answers from indexed material only. When material does not
+cover a question, it says so rather than filling the gap.
+
+This is a rule *about Research mode*, not about the product. Creative mode invents — that
+is its purpose. The two are separate surfaces so the distinction is structural rather than
+something the GM must infer ([ADR-0012](adr/adr-0012-two-ai-modes.md)).
+
+**PRIN-006 — The GM always knows which mode produced something.**
+An invention mistaken for a retrieved fact eventually becomes canon. Modes are visually
+distinct, named in their headers, and recorded with each message, so provenance survives
+past the moment it was on screen.
 
 **PRIN-002 — Extraction is deterministic.**
 Text extraction and parsing use libraries, not language models. This keeps ingestion
@@ -80,6 +100,8 @@ The MVP is successful if a GM can:
    fast enough not to stall the table.
 3. Keep their campaign's NPCs, factions, and quests in the workspace instead of scattered
    notes, and find them faster than before.
+4. Draft an NPC or an adventure hook in Creative mode, edit the proposal, and save it — with
+   no doubt about which parts came from their books and which the model invented.
 
 If retrieval is not trustworthy, nothing else in the product matters — every other
 feature assumes the GM believes the answers.
@@ -89,5 +111,6 @@ feature assumes the GM believes the answers.
 - **Not a virtual tabletop.** No maps, tokens, initiative tracking, or dice rolling.
 - **Not player-facing.** No player logins, no shared views, no handouts.
 - **Not a rules engine.** It retrieves and explains rules; it does not adjudicate them.
-- **Not a content generator at the core.** Generation is a convenience, not the thesis.
+- **Not a source of truth about your rules.** Creative mode invents; only Research mode's
+  cited answers should be trusted as coming from your books.
 - **Not multi-tenant.** No hosting, no organisations, no collaboration in v1.

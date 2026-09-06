@@ -19,6 +19,7 @@ knowing why it was made, it belongs in an ADR.
 | [0009](adr-0009-ag-ui-protocol.md) | AG-UI protocol for assistant streaming | Accepted |
 | [0010](adr-0010-no-agent-framework.md) | No agent framework; own the assistant loop | Superseded |
 | [0011](adr-0011-assistant-tools.md) | Assistant tools, and writes go through a proposal | Accepted |
+| [0012](adr-0012-two-ai-modes.md) | Two AI modes — Research and Creative — plus in-character roleplay | Accepted |
 
 ## Format
 
