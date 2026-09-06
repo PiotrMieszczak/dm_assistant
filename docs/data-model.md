@@ -16,6 +16,16 @@ erDiagram
     CAMPAIGN ||--o{ QUEST : contains
     CAMPAIGN ||--o{ SESSION : contains
     CAMPAIGN ||--o{ CONVERSATION : contains
+    CAMPAIGN ||--o{ REGION : contains
+    CAMPAIGN ||--o{ ADVENTURE : contains
+
+    REGION ||--o{ REGION : "contains"
+    REGION ||--o{ CHARACTER : "is where"
+
+    ADVENTURE ||--o{ HOOK : "offers"
+    ADVENTURE ||--o{ SCENE : "made of"
+    ADVENTURE ||--o{ QUEST : "spawns"
+    SCENE }o--|| REGION : "takes place in"
 
     DOCUMENT ||--o{ CHUNK : "extracted into"
     CHUNK ||--|| CHUNK_FTS : "indexed by"
@@ -127,6 +137,100 @@ resolve in both directions on read.
 | `color` | text | hex used by the portrait tile |
 | `glyph` | text | single character for the tile |
 | `is_person_quest` | bool | shows the person icon |
+
+### Region
+
+Places. A region contains other regions, so "the Old Quarter" holds "Market Row" holds
+"The Gilded Flagon" — one entity type at every scale rather than separate Region and
+Location tables.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | int PK | |
+| `campaign_id` | text FK | |
+| `parent_region_id` | int? FK | self-reference; null for top level |
+| `name` | text | "The Old Quarter", "The Gilded Flagon" |
+| `kind` | enum | `realm` \| `settlement` \| `district` \| `site` \| `building` \| `wilderness` |
+| `is_notable` | bool | **Surfaces it on the parent's page** — see below |
+| `summary` | text? | One line, for lists and hover cards |
+| `description` | text? | What the party sees on arriving |
+| `read_aloud` | text? | Boxed text to read at the table |
+| `notes` | text? | GM-private: secrets, what is really going on |
+| `image_path` | text? | |
+| `tags` | json | `["Urban","Dangerous"]` |
+
+**`is_notable` is a separate axis from hierarchy, deliberately.** The tavern where the party
+always meets matters more than a street named once, regardless of how deep it nests. A
+region's page shows its notable children as a short list a GM can reach in one click
+mid-session; everything else stays in the tree. Without this, "easy to find" degrades into
+"navigable if you remember where you put it".
+
+Regions link to characters (`character.region_id`, replacing the free-text `location`) and
+participate in `relationship` edges, so a faction can control a district and the graph shows
+it.
+
+### Adventure
+
+A story unit above quests: premise, the reasons a party gets involved, and the scenes it is
+made of. Modelled on how published modules are actually structured — background, hooks,
+acts, NPCs, rewards.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | int PK | |
+| `campaign_id` | text FK | |
+| `title` | text | "The Broker's Old Bargain" |
+| `premise` | text? | One paragraph: what this is about |
+| `background` | text? | **GM-private.** What is really happening, which players discover through play |
+| `status` | enum | `draft` \| `ready` \| `running` \| `completed` \| `abandoned` |
+| `level_range` | text? | "3–5"; free-form, systems differ |
+| `expected_sessions` | int? | Rough length |
+| `region_id` | int? FK | Where it takes place |
+| `notes` | text? | GM-private |
+| `tags` | json | `["Intrigue","Urban"]` |
+
+**`hook`** — the reasons a party might get involved. Published modules carry two to four,
+each aimed at a different motivation, so a GM can pick the one that fits their table.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | int PK | |
+| `adventure_id` | int FK | |
+| `text` | text | "Kessel's writ names the party as investigators" |
+| `motivation` | text? | "Duty", "Greed", "Revenge" — what kind of character it catches |
+
+**`scene`** — the beats an adventure is made of. Ordered, but a GM runs them in whatever
+order the table produces.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | int PK | |
+| `adventure_id` | int FK | |
+| `ordinal` | int | Suggested order |
+| `title` | text | "Smoke over Riverside" |
+| `purpose` | enum | `hook` \| `complication` \| `setback` \| `climax` \| `payoff` |
+| `summary` | text? | What happens, in a line |
+| `read_aloud` | text? | Boxed text |
+| `gm_notes` | text? | GM-private: what can go wrong, what the NPCs want |
+| `region_id` | int? FK | Where it happens |
+| `is_optional` | bool | Skippable if time runs short |
+
+**`purpose` follows the Five Room Dungeon**, a widely-used structure where each beat has a
+job: hook the party, complicate, deepen with a setback, confront, then make it matter. It
+is deliberately **not** about rooms — the same five beats structure urban intrigue and
+investigation as well as dungeons, which is why the entity is `scene` rather than `room`.
+The enum is a prompt, not a constraint: an adventure may have three scenes or nine, and
+several may share a purpose.
+
+**Joins**
+
+| Table | Purpose |
+|-------|---------|
+| `adventure_character` | Which NPCs appear, with a `role` note ("the client", "the twist") |
+| `adventure_faction` | Which factions are involved and how |
+| `scene_character` | Which NPCs are present in a given scene |
+
+Quests gain `adventure_id` (nullable) so a quest can belong to an adventure or stand alone.
 
 ### Document and Chunk
 
@@ -240,6 +344,23 @@ can disagree.
 This makes `BND-003` load-bearing rather than tidy: with real users, a missed owner filter
 is a data leak, not an inconvenience. Enforce it in the repository layer, and test it
 (IMP-011 in [ADR-0008](adr/adr-0008-own-auth-v1.md)).
+
+**DEC-006 — One Region entity at every scale, with notability as a separate flag.**
+A realm, a district, and a tavern are the same kind of thing differing in scope, so one
+self-referencing table beats parallel Region and Location tables that would need identical
+columns and duplicate every relationship. `is_notable` then answers a different question
+from `parent_region_id`: not *where does this sit* but *is this worth surfacing*. Depth in a
+tree is a poor proxy for importance.
+
+**DEC-007 — Scenes, not rooms.**
+The Five Room Dungeon structure is about narrative beats, not floor plans — it works for
+urban intrigue and investigation as well as dungeon crawls. Naming the entity `room` would
+have quietly excluded most of what a game master actually runs.
+
+**DEC-008 — `read_aloud` and `notes` are separate fields, everywhere they appear.**
+Published modules distinguish boxed text (read to players) from GM-facing detail (what is
+really happening). Merging them risks reading a secret aloud, which is unrecoverable at the
+table. This extends DEC-004's private-notes convention rather than inventing a new one.
 
 **DEC-004 — GM notes are private by construction.**
 `notes` on characters and factions hold spoilers ("Do not reveal before Session 15").

@@ -83,6 +83,18 @@ separate `Faction` entity. All support create, read, update, delete, plus portra
 - Faction list and detail, with members and inter-faction relationships
 - Character detail: stats, connections, quote, GM notes, disposition
 
+### Regions and Adventures — Full
+
+The entities a GM needs to *build* a campaign, not only run one.
+
+- **Regions** nested at any scale — realm, settlement, district, site, building. Notable
+  places surface on their parent's page so a GM reaches them in one click mid-session
+- **Adventures** with premise, GM-private background, hooks tagged by motivation, and
+  ordered scenes carrying read-aloud text and private notes
+- Scenes tagged by purpose (hook / complication / setback / climax / payoff) so the shape
+  of an adventure is readable at a glance
+- Quests can belong to an adventure or stand alone
+
 ### Quests — Full
 
 - Five-status quest log (available, in progress, completed, failed, inactive)
@@ -157,6 +169,10 @@ The MVP is done when all of the following hold:
   interface at the time — not inferable only from the text.
 - **AC-017** Creative and in-character output is never indexed. Asking Research mode about
   something only invented in Creative mode returns "not in your material".
+- **AC-018** A region's page lists its notable children; a region nested three levels deep
+  and marked notable is still one click from its parent.
+- **AC-019** Read-aloud text and GM notes are visually distinct everywhere both appear.
+  Nothing marked GM-private can be surfaced in a read-aloud context.
 
 ## Deliberately unresolved
 

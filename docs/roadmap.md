@@ -89,6 +89,8 @@ The session-running surface.
 - Factions: list, detail, membership, inter-faction relationships
 - Quests: five status tabs, progress, subquests, transitions, reactivate
 - Sessions: list, rich-text composer, indexing of session bodies
+- Regions: nested tree, notable children surfaced on the parent page
+- Adventures: premise, background, hooks, scenes with read-aloud and GM notes, cast
 - Overview: hero, stat grid, recent activity — driven by real counts
 
 **Exit gate.** AC-005 — all entities persist across restart, and every list, detail, and
