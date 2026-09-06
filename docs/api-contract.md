@@ -233,6 +233,22 @@ event: RunFinished
 data: {"threadId":"conv-12","runId":"run-88","outcome":"success"}
 ```
 
+**Proposals arrive as a custom event too.** An extracted entity is not written; it is
+emitted for the GM to confirm ([ADR-0011](adr/adr-0011-assistant-tools.md)):
+
+```
+event: Custom
+data: {"name":"dm.proposal","value":{
+        "kind":"character",
+        "draft":{"name":"Brother Cael","role":"Human Cleric","level":5},
+        "sources":{"name":[812],"role":[812],"level":[815]}}}
+```
+
+`sources` maps each populated field to the chunks it came from. A field absent from
+`sources` was invented by the model and the form marks it as unsourced. The GM submits the
+result through the ordinary `POST /campaigns/{cid}/characters` — there is no privileged
+assistant write path.
+
 **Citations are a custom event.** AG-UI has no citation type — grounding is a product
 concern, not a protocol one — so they are emitted as a namespaced `dm.citation` custom
 event. That keeps the product-specific part visibly distinct from the protocol.

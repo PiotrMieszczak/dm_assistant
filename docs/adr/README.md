@@ -17,7 +17,8 @@ knowing why it was made, it belongs in an ADR.
 | [0007](adr-0007-local-profile-auth.md) | Local profile in v1; Supabase Auth when hosting arrives | Superseded |
 | [0008](adr-0008-own-auth-v1.md) | Build authentication by hand in v1 | Accepted |
 | [0009](adr-0009-ag-ui-protocol.md) | AG-UI protocol for assistant streaming | Accepted |
-| [0010](adr-0010-no-agent-framework.md) | No agent framework; own the assistant loop | Accepted |
+| [0010](adr-0010-no-agent-framework.md) | No agent framework; own the assistant loop | Superseded |
+| [0011](adr-0011-assistant-tools.md) | Assistant tools, and writes go through a proposal | Accepted |
 
 ## Format
 
@@ -55,6 +56,13 @@ Two threads run through these records and are worth reading together:
 models from ingestion; [ADR-0006](adr-0006-llm-gateway.md) confines them to a single
 gateway at query time. Both are enforced by architectural tests rather than convention,
 because both erode the first time someone adds "just one small call".
+
+**The same question, asked twice, with different facts.**
+[ADR-0010](adr-0010-no-agent-framework.md) rejected an agent framework given one read-only
+tool; [ADR-0011](adr-0011-assistant-tools.md) re-made the case once the assistant gained
+several tools and a write. The answer held, but the reasoning had to be redone rather than
+assumed — which is what supersession is for. An ADR that quietly read as though "no
+framework" were self-evident would hide that it was a close call the second time.
 
 **A superseded record is kept, not deleted.** [ADR-0007](adr-0007-local-profile-auth.md)
 deferred authentication to a managed provider; [ADR-0008](adr-0008-own-auth-v1.md) reverses

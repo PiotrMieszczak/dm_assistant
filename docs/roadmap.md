@@ -65,9 +65,14 @@ Retrieval becomes conversation.
 - AI panel: bubbles, tool chips, streaming cursor, typing dots, quick prompts, composer
 - Provider switching from Settings, effective without restart
 - Citation rendering — requires the design gap to be closed first
+- The tool loop: search, session fetch, entity fetch, and `propose_*`
+  ([ADR-0011](adr/adr-0011-assistant-tools.md)), bounded and hand-written
+- Proposal form in chat — an editable, source-cited draft. Blocked on the design gap
 
-**Exit gate.** AC-002, AC-003, AC-004 — grounded answers with visible citations, explicit
-refusal on unindexed topics, and live provider switching. Refusal behaviour is verified
+**Exit gate.** AC-002, AC-003, AC-004, AC-012, AC-013, AC-014 — grounded answers with
+visible citations, explicit refusal on unindexed topics, live provider switching, session
+summaries drawn from records, and extraction that produces a **draft** rather than a saved
+row, with per-field sources. Refusal behaviour is verified
 against a set of deliberately-unanswerable questions, not assumed.
 
 ## Phase 4 — Campaign entities

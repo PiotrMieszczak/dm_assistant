@@ -52,7 +52,12 @@ The differentiating capability. Upload → extract → index → retrieve.
 - Chat panel streaming [AG-UI](https://docs.ag-ui.com/) events over SSE ([ADR-0009](adr/adr-0009-ag-ui-protocol.md))
 - Retrieval grounded in the active campaign's indexed chunks, with citations
 - LLM Gateway abstracting provider; Ollama and Claude both selectable at runtime
-- Tool-call indicator chips (the design's green check rows) for retrieval steps
+- Tool-call indicator chips (the design's green check rows) for every tool that runs
+- **Three request shapes** ([ADR-0011](adr/adr-0011-assistant-tools.md)):
+  retrieve-and-answer ("what are opportunity attacks?"), fetch-and-transform
+  ("summarise last session"), and extract-and-propose ("create an NPC from this module")
+- **Proposals, never silent writes.** An extracted entity arrives as a pre-filled form
+  citing the chunks each field came from. Nothing is saved until the GM confirms
 - Quick-prompt chips, typing indicator, attach affordance
 
 ### NPCs, Players, Factions — Full
@@ -96,7 +101,8 @@ Rendered from real relationship data, not mock data.
 | **Vector search / embeddings** | FTS5 keyword retrieval is the honest first attempt. Add semantic search when keyword search is demonstrably insufficient — measured, not assumed. See [ADR-0005](adr/adr-0005-fts5-before-vectors.md). | Retrieval quality measurably fails on paraphrased queries |
 | **OCR for scanned PDFs** | Native-text PDFs cover the common case. OCR adds a heavy dependency chain. The design's `Queued` + "awaiting OCR" state is built; the processor is not. | Users upload scanned material in practice |
 | **Multi-agent orchestration** | One assistant with retrieval tools is simpler and easier to evaluate than five agents behind an intent router. | A single agent measurably underperforms on distinct task types |
-| **Agent framework (LangChain, Pydantic AI)** | One assistant, one tool — the loop is a few dozen readable lines. A framework would own prompt assembly, moving the grounding rule out of the Gateway. See [ADR-0010](adr/adr-0010-no-agent-framework.md). | Multi-step planning, sub-agents, or real branching. Reassess Pydantic AI first |
+| **Agent framework (LangChain, Pydantic AI)** | Three or four tools in one bounded loop is not framework territory, and a framework would own prompt assembly — moving the grounding rule out of the Gateway. See [ADR-0011](adr/adr-0011-assistant-tools.md). | Real branching or sub-agents. Reassess Pydantic AI first |
+| **Automatic entity extraction on upload** | This is what [ADR-0002](adr/adr-0002-deterministic-extraction.md) forbids: a model in the ingestion path writing unreviewed. A hundred silently created NPCs of uncertain quality is worse than none. | Extraction accuracy is measurable against a fixture corpus |
 | **AG-UI beyond streaming** | Sub-agent composition, agent steering, generative UI, and shared-state sync are unused. The protocol is adopted for streaming only. | A second agent, or the UI needs to steer a running one |
 | **Managed auth provider (Supabase, Clerk)** | Auth is built by hand deliberately — the project is a learning exercise, and a provider hides the mechanism. See [ADR-0008](adr/adr-0008-own-auth-v1.md). | The maintenance burden outgrows its teaching value |
 | **Automatic entity extraction from PDFs** | Auto-creating NPCs from a module is attractive and unreliable. Manual entry first; the extraction path stays open. | Extraction accuracy can be measured against a fixture corpus |
@@ -126,6 +132,12 @@ The MVP is done when all of the following hold:
   verified by test, not by inspection.
 - **AC-011** A password reset link works once and expires; requesting a reset for an
   unknown address returns the same response as for a known one.
+- **AC-012** "Summarise last session" returns a summary drawn from that session's record,
+  not from general knowledge.
+- **AC-013** "Create an NPC from this module" produces a **draft form**, not a saved row.
+  Nothing appears in the NPC list until the GM confirms.
+- **AC-014** Each populated field in a proposal cites the chunk it came from; a field with
+  no source is marked as unsourced rather than presented as extracted.
 
 ## Deliberately unresolved
 

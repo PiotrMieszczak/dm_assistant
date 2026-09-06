@@ -70,7 +70,7 @@ place a model is invoked.
 | Extraction | PyMuPDF, pdfplumber | Deterministic; [ADR-0002](adr/adr-0002-deterministic-extraction.md) |
 | LLM access | Gateway over Ollama + Claude | [ADR-0006](adr/adr-0006-llm-gateway.md) |
 | Assistant streaming | AG-UI protocol over SSE | [ADR-0009](adr/adr-0009-ag-ui-protocol.md) |
-| Agent loop | Plain FastAPI — no framework | [ADR-0010](adr/adr-0010-no-agent-framework.md) |
+| Agent loop | Plain FastAPI — no framework, bounded tool loop | [ADR-0011](adr/adr-0011-assistant-tools.md) |
 | Testing | Vitest + Testing Library, Playwright, pytest | |
 
 ## Repository layout
@@ -218,6 +218,22 @@ flowchart TB
     style RET fill:#adf0c7,stroke:#087429
 ```
 
+### The tools
+
+The loop is bounded and the tool set is small ([ADR-0011](adr/adr-0011-assistant-tools.md)):
+
+| Tool | Purpose | Writes |
+|------|---------|--------|
+| `search_documents` | FTS5 over indexed chunks | — |
+| `get_session`, `list_sessions` | Session records, for summaries | — |
+| `get_character`, `get_faction` | Campaign entities | — |
+| `propose_character`, `propose_faction` | A draft plus per-field sources | **Draft only** |
+
+**No tool writes.** A proposal returns a populated form with the chunk ids each field came
+from; the GM edits and submits through the normal `POST /characters`. The model suggests,
+the GM commits — which is what keeps this downstream of
+[ADR-0002](adr/adr-0002-deterministic-extraction.md) rather than in violation of it.
+
 ### What owns what
 
 | Layer | Owns | Does **not** own |
@@ -263,10 +279,15 @@ import path to `gateway/`. A test asserts this.
 **BND-003 — Campaign scoping is enforced server-side.** Every query filters by
 `campaign_id`. The frontend never sees another campaign's data.
 
-**BND-006 — No agent framework owns the loop.** The retrieve-prompt-stream loop is plain
-code in `api/assistant.py`. A framework there would also own prompt assembly, moving the
-grounding rule out of the single place that enforces it
-([ADR-0010](adr/adr-0010-no-agent-framework.md)).
+**BND-006 — No agent framework owns the loop.** The tool loop is plain code in
+`api/assistant.py`, bounded to a fixed number of iterations. A framework there would also
+own prompt assembly, moving the grounding rule out of the single place that enforces it
+([ADR-0011](adr/adr-0011-assistant-tools.md)).
+
+**BND-007 — No tool writes to the campaign.** `propose_*` tools return drafts; the GM
+confirms through the ordinary create endpoints. A test asserts no proposal tool is
+reachable from `ingestion/`, keeping [ADR-0002](adr/adr-0002-deterministic-extraction.md)
+structural rather than conventional.
 
 **BND-005 — Provider streams are normalised inside the Gateway.** Model-provider event
 shapes never reach the wire; the Gateway converts them to AG-UI events, so switching

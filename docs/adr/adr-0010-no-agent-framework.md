@@ -1,18 +1,25 @@
 ---
 title: "ADR-0010: No agent framework; own the assistant loop"
-status: "Accepted"
+status: "Superseded"
 date: "2026-09-02"
 authors: "Piotr Mieszczak"
 tags: ["architecture", "decision", "assistant", "llm", "learning"]
 supersedes: ""
-superseded_by: ""
+superseded_by: "ADR-0011"
 ---
 
 # ADR-0010: No agent framework; own the assistant loop
 
 ## Status
 
-Proposed | **Accepted** | Rejected | Superseded | Deprecated
+Proposed | Accepted | Rejected | **Superseded** | Deprecated
+
+> Superseded by [ADR-0011](adr-0011-assistant-tools.md). CON-002 here assumed one
+> assistant with one read-only tool. The assistant now also summarises sessions and
+> proposes entities extracted from indexed documents — several tools, a real multi-step
+> loop, and one that writes. The conclusion (no framework, own the loop) survives; the
+> reasoning had to be re-made against the larger scope, which is why this is a new record
+> rather than an edit.
 
 ## Context
 
