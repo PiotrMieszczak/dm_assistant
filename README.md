@@ -23,6 +23,7 @@ Start with [docs/README.md](docs/README.md).
 | [MVP scope](docs/mvp-scope.md) | What ships in v1 and what explicitly does not |
 | [Data model](docs/data-model.md) | Entities, relationships, and storage |
 | [Architecture](docs/architecture.md) | System shape, stack, and boundaries |
+| [Folder structure](docs/folder-structure.md) | Folder layout and dependency rules for both apps |
 | [Design spec](docs/design/overview.md) | Screens, layout, and interaction behaviour |
 | [Design tokens](docs/design/reference.md) | Colors, type, spacing, radii, shadows |
 | [API contract](docs/api-contract.md) | HTTP surface between frontend and backend |
@@ -65,6 +66,53 @@ A Miro board with the system shape and both data flows — ingestion and retriev
 mirroring [docs/architecture.md](docs/architecture.md). Useful for walking someone through
 the two boundaries that define this system: extraction never calls a model, and every
 model call goes through one gateway.
+
+## Folder structure
+
+Two applications, one dependency direction: volatile things at the edge, stable things at
+the centre, every arrow pointing inward. Full layout and the enforced import rules are in
+[docs/folder-structure.md](docs/folder-structure.md).
+
+**Backend — hexagonal (ports and adapters).** The domain knows nothing about the world.
+
+```
+backend/app/
+├── domain/          # entities, value objects, invariants. Pure — no I/O, no framework.
+├── ports/           # interfaces the domain declares: repositories, search, llm,
+│                    #   extraction, files, clock
+├── application/     # use cases. Orchestrates domain + ports; never imports an adapter.
+├── adapters/        # the outside world — the only place SDKs are imported
+│   ├── persistence/ #   sqlalchemy/ + memory/ (the fast test double)
+│   ├── search/      #   fts5/ + memory/
+│   ├── llm/         #   claude, ollama, fake, prompts per mode
+│   └── extraction/  #   pymupdf, ocr
+├── entrypoints/     # driving adapters: http/, worker/, cli/. Transport only.
+└── composition.py   # the ONLY module wiring ports to adapters
+```
+
+```
+entrypoints ──→ application ──→ ports ←── adapters
+                     │           │          │
+                     └───────────┴──→ domain ┘
+```
+
+**Frontend — domain-oriented split.** Bounded contexts with published interfaces.
+
+```
+frontend/src/
+├── app/         # router, providers, shell
+├── domains/     # campaign · cast · world · adventure · library · graph · assistant
+│   └── <ctx>/   #   model/ · api/ · components/ · store.ts · index.ts ← public API
+├── screens/     # routed pages. Compose domains, own no logic.
+├── ui/          # design-system primitives. Knows no domain.
+├── styles/      # tokens.css, reset, global
+└── lib/         # http client, SSE reader, utils
+```
+
+**One rule does most of the work:** a domain may only be imported through its `index.ts`.
+Deep imports are what turn a domain split into a ball of mud. Both rule sets run in CI —
+`import-linter` on Python, `eslint-plugin-boundaries` on TypeScript — so a violation fails
+the build rather than drifting quietly.
 
 ## Two ideas worth knowing up front
 

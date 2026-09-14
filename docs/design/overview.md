@@ -211,15 +211,16 @@ defaults **open on desktop** and **closed on mobile**.
 - **Focus** — inputs move their border to `--accent`
 - **Scroll** — 9px custom scrollbar, `--scrollbar-thumb`, transparent track
 
-## Adventure Creator — brief ready, design pending
+## Adventure Creator
 
-Creative mode ([ADR-0012](../adr/adr-0012-two-ai-modes.md)) needs its own page, which this
-prototype does not cover. A brief for Claude Design is written and ready to run:
-**[adventure-creator-prompt.md](adventure-creator-prompt.md)**.
+Creative mode ([ADR-0012](../adr/adr-0012-two-ai-modes.md)) has its own page, designed in
+the same prototype:
 
-It covers the adventure editor, the list, the empty state, an AI proposal awaiting
-acceptance, and mobile — plus the two distinctions the page lives or dies on: read-aloud
-versus GM-private text, and AI draft versus accepted content.
+**▶ [Open the interactive design](https://claude.ai/code/artifact/a7d4de30-0826-4747-b295-a584fe6f0f28)**
+
+It covers the adventure editor, the list, the clue board, the empty state, an AI proposal
+awaiting acceptance, and mobile — plus the two distinctions the page lives or dies on:
+read-aloud versus GM-private text, and AI draft versus accepted content.
 
 ## Gaps requiring design
 

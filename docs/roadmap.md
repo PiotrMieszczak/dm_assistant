@@ -69,8 +69,8 @@ Retrieval becomes conversation.
   ([ADR-0011](adr/adr-0011-assistant-tools.md)), bounded and hand-written
 - Proposal form in chat — an editable, source-cited draft. Blocked on the design gap
 - **Research mode** in the side panel — the grounded behaviour above
-- **Creative mode** as its own page, campaign-aware, output via proposals. Blocked on
-  design (the page does not exist in the spec)
+- **Creative mode** as its own page, campaign-aware, output via proposals — the Adventure
+  Creator in [design/overview.md](design/overview.md)
 - **In-character mode** opened from a character, with the panel restyled as that NPC
   ([ADR-0012](adr/adr-0012-two-ai-modes.md))
 

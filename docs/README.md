@@ -16,9 +16,9 @@ project *RPG Assistant Design Spec* and the decisions recorded here.
 | 2 | [mvp-scope.md](mvp-scope.md) | What ships in v1 and what explicitly does not |
 | 3 | [data-model.md](data-model.md) | Entities, relationships, and storage |
 | 4 | [architecture.md](architecture.md) | System shape, stack, and boundaries |
+| 4a | [folder-structure.md](folder-structure.md) | Folder layout and dependency rules for both apps |
 | 5 | [design/overview.md](design/overview.md) | Screens, layout, and interaction behaviour |
 | 6 | [design/reference.md](design/reference.md) | Colors, type, spacing, radii, shadows |
-| 6a | [design/adventure-creator-prompt.md](design/adventure-creator-prompt.md) | Brief for the Creative mode page (design pending) |
 
 **▶ [Open the interactive design](https://claude.ai/code/artifact/a7d4de30-0826-4747-b295-a584fe6f0f28)** — the running prototype, and
 the source of truth for anything visual. Click through it rather than reading about it.
