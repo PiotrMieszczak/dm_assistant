@@ -13,7 +13,9 @@ export function ActivityList({ entries }: ActivityListProps) {
       <ul className={styles.list}>
         {entries.map((entry) => (
           <li key={entry.id} className={styles.row}>
-            <Badge tone={toneFor(entry.kind)}>{labelFor(entry.kind)}</Badge>
+            <Badge className={styles.kind} tone={toneFor(entry.kind)}>
+              {labelFor(entry.kind)}
+            </Badge>
             <div className={styles.body}>
               <div className={styles.title}>{entry.title}</div>
               <div className={styles.detail}>{entry.detail}</div>

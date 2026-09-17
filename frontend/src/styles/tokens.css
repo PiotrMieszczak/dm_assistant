@@ -37,6 +37,8 @@
   /* Other */
   --quest-subquest: #8b6fc4;
   --scrollbar-thumb: #2e3340;
+  --backdrop: rgba(6, 8, 11, 0.6);
+  --surface-tabbar: rgba(14, 16, 21, 0.94);
 
   /* Typography */
   --font-display: "Crimson Pro", Georgia, serif;
@@ -57,6 +59,8 @@
   --shadow-rail-expanded: 0 30px 80px rgba(0, 0, 0, 0.75);
   --shadow-accent: 0 6px 20px rgba(232, 184, 122, 0.28);
   --shadow-fab: 0 8px 28px rgba(232, 184, 122, 0.35);
+  --shadow-fab-mobile: 0 10px 30px rgba(232, 184, 122, 0.4);
+  --shadow-sheet: 0 -24px 60px rgba(0, 0, 0, 0.6);
 
   /* Layout */
   --header-height: 72px;

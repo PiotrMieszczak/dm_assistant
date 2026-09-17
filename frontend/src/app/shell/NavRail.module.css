@@ -18,7 +18,7 @@
 }
 
 .rail:hover,
-.rail:focus-within {
+.rail:has(:focus-visible) {
   width: var(--rail-width-expanded);
   box-shadow: var(--shadow-rail-expanded);
 }
@@ -39,10 +39,13 @@
 
 .item:hover {
   background: var(--surface-hover);
-  color: var(--text-secondary);
+  color: var(--accent);
 }
 
-.active {
+/* Active keeps the wash so it reads as current, not merely hovered. */
+.active,
+.active:hover {
+  background: var(--accent-wash);
   color: var(--accent);
 }
 
@@ -60,7 +63,7 @@
 }
 
 .rail:hover .label,
-.rail:focus-within .label {
+.rail:has(:focus-visible) .label {
   opacity: 1;
 }
 

@@ -43,4 +43,21 @@
     grid-column: 1;
     padding: var(--main-padding-mobile);
   }
+
+  /* Clears the tab bar, and becomes a round icon button — a pill this wide
+     would crowd the bar beneath it. */
+  .fab {
+    right: 18px;
+    bottom: 80px;
+    width: 54px;
+    height: 54px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: var(--shadow-fab-mobile);
+  }
+
+  .fabLabel {
+    display: none;
+  }
 }
