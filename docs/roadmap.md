@@ -14,7 +14,7 @@ Scaffold both applications and the token system.
 - CSS Modules pipeline, no Tailwind ([ADR-0004](adr/adr-0004-css-modules-over-tailwind.md))
 - Radix primitives wrapped in `ui/`: Button, Input, Dialog, Tabs, Card, Chip
 - Storybook covering each primitive with its designed states
-- SQLite schema and migrations from [data-model.md](data-model.md)
+- PostgreSQL schema and migrations from [data-model.md](data-model.md); `docker compose` for local use ([ADR-0013](adr/adr-0013-postgres-for-local-and-hosted.md))
 - Test harness: Vitest + Testing Library, pytest, Playwright
 
 **Exit gate.** A primitive rendered in Storybook is visually indistinguishable from the
@@ -46,7 +46,8 @@ The differentiator. Everything downstream depends on this being trustworthy.
 - Deterministic extraction, chunking with headings and page spans
   ([ADR-0002](adr/adr-0002-deterministic-extraction.md))
 - Background worker with real per-page progress
-- FTS5 index and search endpoint ([ADR-0005](adr/adr-0005-fts5-before-vectors.md))
+- Hybrid search: `tsvector` + `pgvector`, RRF fusion, relevance floor ([ADR-0014](adr/adr-0014-hybrid-retrieval.md))
+- Chunk embedding at ingestion; `sha256` deduplication; scanned-page detection
 - Documents view with live status, progress bars, and a `Failed` state with retry
 - Structural test asserting `ingestion/` cannot import `gateway/` (BND-001)
 

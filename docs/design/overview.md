@@ -80,8 +80,9 @@ Full-viewport, vertically centred card on the login radial gradient.
   hover border `--border-emphasis` → `#5A6270`
 - Footer: "New to Referee? Create a table"
 
-**Behaviour.** All three actions advance to the campaign picker. v1 has no real auth
-(PRIN-004); the screen establishes the local profile.
+**Behaviour.** All three actions advance to the campaign picker. v1 has real auth built
+by hand ([ADR-0008](../adr/adr-0008-own-auth-v1.md)); the same screen serves local and
+hosted deployment (PRIN-004).
 
 ## 2. Campaign Picker
 

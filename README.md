@@ -39,8 +39,8 @@ Start with [docs/README.md](docs/README.md).
 | Components | Radix UI primitives, documented in Storybook |
 | State | TanStack Query (server) + Zustand (UI) |
 | Backend | Python 3.11+ / FastAPI |
-| Storage | SQLite with FTS5 |
-| Extraction | PyMuPDF, pdfplumber — deterministic, no LLM |
+| Storage | PostgreSQL — `tsvector` + `pgvector`, local and hosted |
+| Extraction | PyMuPDF, pdfplumber — deterministic, no generative model |
 | AI | Gateway over Ollama and Claude |
 
 See [ADR-0001](docs/adr/adr-0001-react-vite-spa.md) for the stack rationale.
@@ -83,7 +83,7 @@ backend/app/
 ├── application/     # use cases. Orchestrates domain + ports; never imports an adapter.
 ├── adapters/        # the outside world — the only place SDKs are imported
 │   ├── persistence/ #   sqlalchemy/ + memory/ (the fast test double)
-│   ├── search/      #   fts5/ + memory/
+│   ├── search/      #   hybrid/ + memory/
 │   ├── llm/         #   claude, ollama, fake, prompts per mode
 │   └── extraction/  #   pymupdf, ocr
 ├── entrypoints/     # driving adapters: http/, worker/, cli/. Transport only.
@@ -121,8 +121,11 @@ contains only text that is genuinely in your documents. That is what makes citat
 trustworthy. Models are used at query time only.
 See [ADR-0002](docs/adr/adr-0002-deterministic-extraction.md).
 
-**Infrastructure is deferred with a trigger, not by silence.** No graph database, no
-vector store in v1 — each has a written condition that would justify adding it, and the
-instrumentation to detect that condition is part of the work.
-See [ADR-0003](docs/adr/adr-0003-sqlite-single-store.md) and
-[ADR-0005](docs/adr/adr-0005-fts5-before-vectors.md).
+**Infrastructure is deferred with a trigger — and the trigger can fire.** v1 deferred both
+a server database and a vector store, each with a written revisit condition. When the
+product's target grew to include hosted deployment, ADR-0003's own condition was met and
+both decisions were re-made: one PostgreSQL for local and hosted
+([ADR-0013](docs/adr/adr-0013-postgres-for-local-and-hosted.md)), and hybrid keyword +
+vector retrieval in that same database
+([ADR-0014](docs/adr/adr-0014-hybrid-retrieval.md)). The superseded records are kept —
+the premise changed, not the analysis.

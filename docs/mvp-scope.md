@@ -42,10 +42,13 @@ a tool ([ADR-0008](adr/adr-0008-own-auth-v1.md)).
 The differentiating capability. Upload → extract → index → retrieve.
 
 - Upload PDF, Markdown, and plain text
-- Deterministic extraction (PyMuPDF / pdfplumber), chunking, SQLite FTS5 indexing
+- Deterministic extraction (PyMuPDF / pdfplumber), chunking on paragraph and heading
+  boundaries, PostgreSQL full-text **and** vector indexing (ADR-0014)
+- Deduplication by `sha256` — the same file uploaded twice is not processed twice
+- Scanned pages detected and routed to `awaiting OCR`, not `failed`
 - Background processing with live status: `Queued` → `Processing` (%) → `Indexed` / `Failed`
 - Document list exactly as designed, including per-item progress
-- Full-text search across a campaign's indexed material
+- Hybrid search across a campaign's indexed material — keyword and vector, fused (RRF)
 
 ### Assistant — Full
 
@@ -122,8 +125,9 @@ Rendered from real relationship data, not mock data.
 
 | Item | Why | Revisit when |
 |------|-----|--------------|
-| **Neo4j / graph database** | The domain is graph-shaped, but the *queries* are not — every one the design asks for is zero or one hop. A graph DB earns its cost on deep traversal, which nothing here does. See [ADR-0003 ALT-011](adr/adr-0003-sqlite-single-store.md). | Graph queries exceed 2 hops, or edge counts make the graph endpoint slow |
-| **Vector search / embeddings** | FTS5 keyword retrieval is the honest first attempt. Add semantic search when keyword search is demonstrably insufficient — measured, not assumed. See [ADR-0005](adr/adr-0005-fts5-before-vectors.md). | Retrieval quality measurably fails on paraphrased queries |
+| **Neo4j / graph database** | The domain is graph-shaped, but the *queries* are not — every one the design asks for is zero or one hop. A graph DB earns its cost on deep traversal, which nothing here does. The argument survives the move to PostgreSQL unchanged. See [ADR-0003 ALT-011](adr/adr-0003-sqlite-single-store.md). | Graph queries exceed 2 hops, or edge counts make the graph endpoint slow |
+| **Cross-encoder reranking** | Hybrid retrieval ships in v1 ([ADR-0014](adr/adr-0014-hybrid-retrieval.md)). Reranking is likely the next quality jump, but it puts a second model in the live query path (PRIN-003) and its gain over RRF is unmeasured here. | It beats plain RRF on the evaluation set (ADR-0014 IMP-004) |
+| **Dedicated vector database** | `pgvector` sits in the same row and transaction as the chunk text. A separate store reintroduces the multi-store consistency burden for corpus sizes where it is not the bottleneck. | Measured recall or latency problems, not scale anxiety |
 | **OCR for scanned PDFs** | Native-text PDFs cover the common case. OCR adds a heavy dependency chain. The design's `Queued` + "awaiting OCR" state is built; the processor is not. | Users upload scanned material in practice |
 | **Multi-agent orchestration** | One assistant with retrieval tools is simpler and easier to evaluate than five agents behind an intent router. | A single agent measurably underperforms on distinct task types |
 | **Agent framework (LangChain, Pydantic AI)** | Three or four tools in one bounded loop is not framework territory, and a framework would own prompt assembly — moving the grounding rule out of the Gateway. See [ADR-0011](adr/adr-0011-assistant-tools.md). | Real branching or sub-agents. Reassess Pydantic AI first |

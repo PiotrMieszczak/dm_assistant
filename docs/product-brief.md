@@ -41,7 +41,7 @@ factions, a quest log, session records, and a knowledge graph of how everyone re
 ### Who it is for
 
 Game masters running live sessions, primarily at a table or over video, for systems like
-D&D 2024 and Traveller 2e. Single-user, local-first. Not a player-facing tool, not a
+D&D 2024 and Traveller 2e. Single-user, runnable locally or hosted. Not a player-facing tool, not a
 virtual tabletop, not a campaign-sharing platform.
 
 ### The core loop
@@ -76,16 +76,17 @@ The workspace is used live, with players waiting. Interactions target under 300m
 Nothing blocks the GM mid-session; long work (document processing) happens in the
 background with visible status.
 
-**PRIN-004 — Local-first, with real accounts.**
-Data lives on the GM's machine, in SQLite. There is no sync and no sharing between users,
-but v1 has **real authentication** — signup, login, Google OAuth, and password reset, all
-built in the application rather than delegated to a provider
+**PRIN-004 — Runs well locally and hosted, with real accounts.**
+The product targets two deployments as equals: on a game master's own machine, and hosted —
+on their own hardware or a service. Both run the same PostgreSQL and the same code path
+([ADR-0013](adr/adr-0013-postgres-for-local-and-hosted.md)), so the local mode genuinely
+exercises what the hosted mode runs. v1 has **real authentication** — signup, login, Google
+OAuth, and password reset, all built in the application rather than delegated to a provider
 ([ADR-0008](adr/adr-0008-own-auth-v1.md)).
 
 That is a deliberate choice: this project is a learning exercise as well as a tool, and a
-managed auth provider would hide exactly the mechanism worth understanding. Hosting for
-other game masters stays a possible end state; with real users in v1, it is a deployment
-question rather than a rewrite.
+managed auth provider would hide exactly the mechanism worth understanding. The cost is
+that local use is no longer zero-setup — PostgreSQL has to be running (ADR-0013 NEG-001).
 
 **PRIN-005 — The interface is calm.**
 Dark, low-chrome, image-forward. The tool sits beside a game; it should not compete with

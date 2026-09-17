@@ -1,18 +1,25 @@
 ---
 title: "ADR-0005: FTS5 keyword retrieval before semantic search"
-status: "Accepted"
+status: "Superseded"
 date: "2026-07-31"
 authors: "Piotr Mieszczak"
 tags: ["architecture", "decision", "retrieval", "search"]
 supersedes: ""
-superseded_by: ""
+superseded_by: "ADR-0014"
 ---
 
 # ADR-0005: FTS5 keyword retrieval before semantic search
 
 ## Status
 
-Proposed | **Accepted** | Rejected | Superseded | Deprecated
+Proposed | Accepted | Rejected | **Superseded** | Deprecated
+
+> Superseded by [ADR-0014](adr-0014-hybrid-retrieval.md). This record deferred vector
+> search because it cost a dependency and a store (CON-003) and its benefit was unmeasured
+> (ALT-004). Under [ADR-0013](adr-0013-postgres-for-local-and-hosted.md) both halves live
+> in the engine already, so the cost this deferral priced is no longer paid. Kept because
+> POS-003 — keyword search wins on proper nouns and rules notation — is precisely why the
+> replacement is hybrid rather than vector-only.
 
 ## Context
 

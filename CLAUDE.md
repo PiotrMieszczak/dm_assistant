@@ -49,9 +49,9 @@ decision is a *new* ADR that supersedes the old one, never an edit to history.
 |-----|----------|--------|
 | [0001](docs/adr/adr-0001-react-vite-spa.md) | React + Vite SPA, FastAPI backend | Accepted |
 | [0002](docs/adr/adr-0002-deterministic-extraction.md) | No LLM in the ingestion path | Accepted |
-| [0003](docs/adr/adr-0003-sqlite-single-store.md) | SQLite single store, no graph DB in v1 | Accepted |
+| [0003](docs/adr/adr-0003-sqlite-single-store.md) | SQLite single store, no graph DB in v1 | **Superseded by 0013** |
 | [0004](docs/adr/adr-0004-css-modules-over-tailwind.md) | CSS Modules + tokens; **no Tailwind** | Accepted |
-| [0005](docs/adr/adr-0005-fts5-before-vectors.md) | FTS5 before semantic search | Accepted |
+| [0005](docs/adr/adr-0005-fts5-before-vectors.md) | FTS5 before semantic search | **Superseded by 0014** |
 | [0006](docs/adr/adr-0006-llm-gateway.md) | One LLM Gateway, runtime provider switching | Accepted |
 | [0007](docs/adr/adr-0007-local-profile-auth.md) | Local profile, deferred auth | **Superseded by 0008** |
 | [0008](docs/adr/adr-0008-own-auth-v1.md) | Build auth by hand in v1 | Accepted |
@@ -59,8 +59,10 @@ decision is a *new* ADR that supersedes the old one, never an edit to history.
 | [0010](docs/adr/adr-0010-no-agent-framework.md) | No agent framework | **Superseded by 0011** |
 | [0011](docs/adr/adr-0011-assistant-tools.md) | Assistant tools; writes via proposal | Accepted |
 | [0012](docs/adr/adr-0012-two-ai-modes.md) | Research / Creative / in-character modes | Accepted |
+| [0013](docs/adr/adr-0013-postgres-for-local-and-hosted.md) | PostgreSQL for local **and** hosted | Accepted |
+| [0014](docs/adr/adr-0014-hybrid-retrieval.md) | Hybrid keyword + vector retrieval | Accepted |
 
-Do not cite 0007 or 0010 as current. Cite what superseded them.
+Do not cite 0003, 0005, 0007, or 0010 as current. Cite what superseded them.
 
 ### The four that break the product if broken
 

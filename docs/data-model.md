@@ -1,7 +1,8 @@
 # Data Model
 
-Derived from the entity shapes in the design prototype. Storage is a single SQLite
-database ([ADR-0003](adr/adr-0003-sqlite-single-store.md)).
+Derived from the entity shapes in the design prototype. Storage is a single PostgreSQL
+database in both local and hosted deployment
+([ADR-0013](adr/adr-0013-postgres-for-local-and-hosted.md)).
 
 ## Entity overview
 
@@ -335,7 +336,8 @@ The ingestion pipeline's output. See [architecture.md](architecture.md).
 | `status` | enum | `queued` \| `processing` \| `indexed` \| `failed` |
 | `progress` | int | 0–100, drives the progress bar |
 | `error` | text? | populated on `failed` |
-| `file_path` | text | original on disk |
+| `storage_key` | text | opaque key into the `FileStore` — a path locally, an object key when hosted |
+| `sha256` | text | content hash; the same file uploaded twice is not extracted or embedded twice (ADR-0014 IMP-003) |
 | `uploaded_at` | timestamp | |
 
 **`chunk`**
@@ -348,9 +350,19 @@ The ingestion pipeline's output. See [architecture.md](architecture.md).
 | `page_from`, `page_to` | int? | for citations |
 | `heading` | text? | nearest section heading |
 | `content` | text | the indexed text |
+| `tsv` | tsvector | PostgreSQL full-text index over `content` |
+| `embedding` | vector(n) | embedded at ingestion by a local model (ADR-0014) |
 
-Retrieval uses an FTS5 virtual table over `chunk.content`
-([ADR-0005](adr/adr-0005-fts5-before-vectors.md)).
+Retrieval is **hybrid**: `tsv` and `embedding` are queried in the same row and the same
+transaction, then fused with reciprocal rank fusion
+([ADR-0014](adr/adr-0014-hybrid-retrieval.md)). Results below a relevance floor are treated
+as no result, so Research mode still refuses rather than answering from weak matches
+(AC-003).
+
+**DEC-012 — chunk text, keyword index, and embedding are one row.**
+Splitting them across stores would buy nothing here and cost cross-store consistency: a
+chunk and its vector must not be able to disagree about which document they belong to. It
+also keeps citations trivial — a fused hit is still a chunk with a page span.
 
 ### Session
 

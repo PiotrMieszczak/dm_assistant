@@ -10,9 +10,9 @@ knowing why it was made, it belongs in an ADR.
 |-----|-------|--------|
 | [0001](adr-0001-react-vite-spa.md) | React + Vite SPA with FastAPI backend | Accepted |
 | [0002](adr-0002-deterministic-extraction.md) | Deterministic document extraction, no LLM in the ingestion path | Accepted |
-| [0003](adr-0003-sqlite-single-store.md) | SQLite as the single data store; no graph database in v1 | Accepted |
+| [0003](adr-0003-sqlite-single-store.md) | SQLite as the single data store; no graph database in v1 | Superseded |
 | [0004](adr-0004-css-modules-over-tailwind.md) | CSS Modules over design tokens; Tailwind excluded | Accepted |
-| [0005](adr-0005-fts5-before-vectors.md) | FTS5 keyword retrieval before semantic search | Accepted |
+| [0005](adr-0005-fts5-before-vectors.md) | FTS5 keyword retrieval before semantic search | Superseded |
 | [0006](adr-0006-llm-gateway.md) | Centralized LLM Gateway with runtime provider switching | Accepted |
 | [0007](adr-0007-local-profile-auth.md) | Local profile in v1; Supabase Auth when hosting arrives | Superseded |
 | [0008](adr-0008-own-auth-v1.md) | Build authentication by hand in v1 | Accepted |
@@ -20,6 +20,8 @@ knowing why it was made, it belongs in an ADR.
 | [0010](adr-0010-no-agent-framework.md) | No agent framework; own the assistant loop | Superseded |
 | [0011](adr-0011-assistant-tools.md) | Assistant tools, and writes go through a proposal | Accepted |
 | [0012](adr-0012-two-ai-modes.md) | Two AI modes — Research and Creative — plus in-character roleplay | Accepted |
+| [0013](adr-0013-postgres-for-local-and-hosted.md) | PostgreSQL as the single store for local and hosted | Accepted |
+| [0014](adr-0014-hybrid-retrieval.md) | Hybrid keyword + vector retrieval with embedded chunks | Accepted |
 
 ## Format
 
@@ -73,8 +75,13 @@ analysis. That is the whole reason accepted records are immutable.
 
 **Deferral with a trigger, not deferral by silence.**
 [ADR-0003](adr-0003-sqlite-single-store.md) and
-[ADR-0005](adr-0005-fts5-before-vectors.md) each decline infrastructure that earlier
-planning treated as given — a graph database and a vector store. Neither is rejected
-outright; each names the measurement that would justify revisiting. The instrumentation
-to make those measurements is itself an implementation note, so "measure first" does not
-quietly become "never revisit".
+[ADR-0005](adr-0005-fts5-before-vectors.md) each declined infrastructure that earlier
+planning treated as given — a graph database and a vector store. Neither was rejected
+outright; each named the measurement that would justify revisiting.
+
+**And a trigger that actually fired.** Both were superseded together by
+[ADR-0013](adr-0013-postgres-for-local-and-hosted.md) and
+[ADR-0014](adr-0014-hybrid-retrieval.md) — not because the analysis was wrong, but because
+ADR-0003 ALT-004 named its own revisit condition ("if the product ever becomes hosted or
+multi-user") and the product's target changed to include hosting. The premise moved, the
+reasoning held, and the conclusion inverted. That is the same shape as 0007 → 0008.

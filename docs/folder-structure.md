@@ -23,7 +23,7 @@ flowchart TB
         APP["application/<br/>use cases<br/><i>never imports an adapter</i>"]
         PORTS["ports/<br/>repositories · search · llm<br/>extraction · files · clock"]
         DOM["domain/<br/>entities · value objects · invariants<br/><i>pure — no I/O, no framework</i>"]
-        ADP["adapters/<br/>persistence: sqlalchemy + memory<br/>search: fts5 + memory<br/>llm: claude · ollama · fake<br/>extraction: pymupdf · ocr"]
+        ADP["adapters/<br/>persistence: sqlalchemy + memory<br/>search: hybrid + memory<br/>llm: claude · ollama · fake<br/>extraction: pymupdf · ocr"]
         COMP["composition.py<br/><i>the ONLY module wiring<br/>ports to adapters</i>"]
 
         EP --> APP
@@ -114,14 +114,14 @@ backend/
 │   ├── adapters/                  # The outside world. Implementations of ports.
 │   │   ├── persistence/
 │   │   │   ├── sqlalchemy/
-│   │   │   │   ├── tables.py      # schema — mapped to domain, not equal to it
+│   │   │   │   ├── tables.py      # PostgreSQL schema — mapped to domain, not equal to it
 │   │   │   │   ├── mappers.py     # row ↔ entity translation
 │   │   │   │   ├── repositories/  # one per repository port
 │   │   │   │   ├── unit_of_work.py
 │   │   │   │   └── migrations/
 │   │   │   └── memory/            # in-memory repos — the fast test double
 │   │   ├── search/
-│   │   │   ├── fts5.py            # SQLite FTS5 SearchIndex
+│   │   │   ├── hybrid.py          # tsvector + pgvector, RRF-fused
 │   │   │   └── memory.py
 │   │   ├── llm/
 │   │   │   ├── claude.py          # the only file importing the Anthropic SDK
@@ -189,10 +189,10 @@ codebase names both sides of a port.
 | Port | Real implementations | What it buys |
 |------|---------------------|--------------|
 | `repositories` | SQLAlchemy, in-memory | Domain tests run with no database at all |
-| `search` | FTS5, in-memory | Ranking strategy swaps without touching retrieval logic |
+| `search` | Hybrid (tsvector + pgvector), in-memory | Fusion strategy and relevance floor swap without touching callers |
 | `llm` | Claude, Ollama, fake | Provider is configuration; tests are deterministic |
 | `extraction` | PyMuPDF, OCR | A second parser is a new file, not a refactor |
-| `files` | local disk | Object storage later is one adapter |
+| `files` | local disk, object store | The hosted file provider is a deployment choice, not a schema one (ADR-0013 IMP-005) |
 | `clock` | system, frozen | Time-dependent behaviour is testable without sleeping |
 
 Storage behind a port has a cost worth naming: the schema in `tables.py` is no longer the

@@ -92,6 +92,9 @@ not `403` — a `403` confirms the resource exists.
 ]
 ```
 
+Uploading a file whose `sha256` already exists in the campaign returns the existing
+document rather than processing it again (ADR-0014 IMP-003).
+
 Upload returns `202 Accepted` immediately with `status: "queued"`. The client polls this
 list while any document is `queued` or `processing`, then stops (PRIN-003 — upload never
 blocks).
@@ -100,13 +103,21 @@ blocks).
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| `GET` | `/campaigns/{cid}/search?q=` | FTS5 search over indexed chunks |
+| `GET` | `/campaigns/{cid}/search?q=` | Hybrid search over indexed chunks — keyword + vector, RRF-fused |
 
 ```jsonc
 [{ "chunkId": 812, "documentId": 1, "filename": "Core Rulebook v3.pdf",
    "heading": "Opportunity Attacks", "pageFrom": 195, "pageTo": 195,
-   "snippet": "…when a hostile creature <mark>leaves your reach</mark>…", "score": 4.21 }]
+   "snippet": "…when a hostile creature <mark>leaves your reach</mark>…",
+   "score": 0.0312, "matchedBy": ["keyword", "vector"] }]
 ```
+
+`score` is the fused RRF score, not a keyword rank — it is comparable between results of
+one query, not across queries. `matchedBy` says which retriever(s) surfaced the chunk,
+which is what makes a bad result diagnosable (ADR-0014 NEG-002).
+
+An empty array means nothing cleared the relevance floor. That is a real answer, not an
+error: Research mode refuses on it rather than answering from weak matches (AC-003).
 
 ## Characters
 

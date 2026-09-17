@@ -28,8 +28,8 @@ flowchart TB
     end
 
     subgraph DATA["Storage"]
-        DB[("SQLite + FTS5")]
-        FS[("Uploaded files")]
+        DB[("PostgreSQL<br/>tsvector + pgvector")]
+        FS[("FileStore<br/>disk or object store")]
     end
 
     UI --> RQ --> API
@@ -38,7 +38,7 @@ flowchart TB
 
     API --> DB
     API --> ING
-    ING -->|"extract → chunk → index"| DB
+    ING -->|"extract → chunk → embed → index"| DB
     ING --> FS
 
     API --> RET --> DB
@@ -66,7 +66,8 @@ place a model is invoked.
 | Styling | CSS Modules + CSS custom properties | [ADR-0004](adr/adr-0004-css-modules-over-tailwind.md) |
 | Component docs | Storybook | Primitives are documented as they are built |
 | Backend | Python 3.11+ / FastAPI | [ADR-0001](adr/adr-0001-react-vite-spa.md) |
-| Storage | SQLite + FTS5 | [ADR-0003](adr/adr-0003-sqlite-single-store.md) |
+| Storage | PostgreSQL (`tsvector` + `pgvector`), local and hosted | [ADR-0013](adr/adr-0013-postgres-for-local-and-hosted.md) |
+| Retrieval | Hybrid keyword + vector, RRF-fused | [ADR-0014](adr/adr-0014-hybrid-retrieval.md) |
 | Extraction | PyMuPDF, pdfplumber | Deterministic; [ADR-0002](adr/adr-0002-deterministic-extraction.md) |
 | LLM access | Gateway over Ollama + Claude | [ADR-0006](adr/adr-0006-llm-gateway.md) |
 | Assistant streaming | AG-UI protocol over SSE | [ADR-0009](adr/adr-0009-ag-ui-protocol.md) |
@@ -98,7 +99,7 @@ dm_assistant/
 │   │   ├── core/             # config, db session
 │   │   ├── models/           # SQLAlchemy models
 │   │   ├── ingestion/        # extract, chunk, index (no LLM)
-│   │   ├── retrieval/        # FTS5 search, context assembly
+│   │   ├── retrieval/        # hybrid search, fusion, context assembly
 │   │   └── gateway/          # provider abstraction
 │   └── pyproject.toml
 └── README.md
@@ -113,9 +114,10 @@ sequenceDiagram
     participant U as GM
     participant API as FastAPI
     participant W as Worker
-    participant DB as SQLite
+    participant DB as PostgreSQL
 
     U->>API: POST /documents (file)
+    API->>API: sha256 — already indexed? return existing
     API->>DB: insert document (status=queued, progress=0)
     API-->>U: 202 + document id
     Note over U,API: UI polls status; upload never blocks
@@ -123,14 +125,19 @@ sequenceDiagram
     W->>DB: claim queued document
     W->>DB: status=processing
     W->>W: extract text (PyMuPDF / pdfplumber)
-    W->>W: split into chunks with headings + page spans
-    W->>DB: insert chunks
-    W->>DB: populate FTS5 index
+    W->>W: near-zero characters? → awaiting OCR, not failed
+    W->>W: split on paragraph + heading boundaries
+    W->>W: embed each chunk (local model)
+    W->>DB: insert chunks + tsvector + embedding
     W->>DB: status=indexed, progress=100
 ```
 
 Failure sets `status=failed` and records `error`. Progress is written per processed page
 so the design's percentage bar reflects real work.
+
+Embedding is part of this deterministic path: it derives a vector from the document's own
+text and invents nothing. BND-001 bars a **generative** model from ingestion, not every
+model ([ADR-0014](adr/adr-0014-hybrid-retrieval.md) IMP-008).
 
 ## Retrieval and grounding
 
@@ -139,16 +146,18 @@ sequenceDiagram
     participant U as GM
     participant API as FastAPI
     participant R as Retrieval
-    participant DB as SQLite
+    participant DB as PostgreSQL
     participant GW as Gateway
 
     U->>API: POST /assistant/messages
     API-->>U: AG-UI: RunStarted
     API->>R: search(campaign, query)
     API-->>U: AG-UI: ToolCallStart
-    R->>DB: FTS5 query over chunks
-    DB-->>R: ranked chunks
-    R-->>API: context + citations
+    R->>R: embed the query (local model)
+    R->>DB: tsvector match + pgvector ANN, one query
+    DB-->>R: two ranked lists
+    R->>R: fuse (RRF), apply relevance floor
+    R-->>API: context + citations, or nothing above the floor
     API-->>U: AG-UI: ToolCallResult
     API->>GW: prompt(context, question)
     GW-->>API: token stream
@@ -187,7 +196,7 @@ flowchart TB
 
     subgraph OURS_BE["Our code — backend (no agent framework)"]
         EP["POST /assistant/messages<br/>the loop, ~40 lines"]
-        RET["Retrieval<br/>FTS5 over chunks"]
+        RET["Retrieval<br/>hybrid: tsvector + pgvector, RRF"]
         GW["LLM Gateway<br/>owns the grounding prompt"]
     end
 
@@ -195,12 +204,12 @@ flowchart TB
         PROV["Ollama · Claude"]
     end
 
-    DB[("SQLite + FTS5")]
+    DB[("PostgreSQL<br/>tsvector + pgvector")]
 
     UI -->|"question"| HOOK
     HOOK -->|"POST, SSE open"| EP
     EP -->|"1 · search(campaign, query)"| RET
-    RET -->|"2 · ranked chunks"| DB
+    RET -->|"2 · keyword + vector"| DB
     DB -->|"3 · chunks + page spans"| RET
     RET -->|"4 · context + citations"| EP
     EP -->|"5 · prompt(context, question)"| GW
@@ -225,7 +234,7 @@ The loop is bounded and the tool set is small ([ADR-0011](adr/adr-0011-assistant
 
 | Tool | Purpose | Writes |
 |------|---------|--------|
-| `search_documents` | FTS5 over indexed chunks | — |
+| `search_documents` | Hybrid search over indexed chunks | — |
 | `get_session`, `list_sessions` | Session records, for summaries | — |
 | `get_character`, `get_faction` | Campaign entities | — |
 | `propose_character`, `propose_faction` | A draft plus per-field sources | **Draft only** |
@@ -271,8 +280,10 @@ and wrong for the app: server data and UI chrome have different lifetimes.
 
 ## Boundaries that matter
 
-**BND-001 — No model in the ingestion path.** Enforced structurally: `ingestion/` has no
-import path to `gateway/`. A test asserts this.
+**BND-001 — No generative model in the ingestion path.** Enforced structurally:
+`ingestion/` has no import path to `gateway/`. A test asserts this. The embedding model is
+not in scope: it derives vectors from the document's own text and writes no content
+([ADR-0014](adr/adr-0014-hybrid-retrieval.md) IMP-008).
 
 **BND-002 — All model calls go through the Gateway.** No provider SDK is imported outside
 `gateway/`. Provider switching is configuration, not code.

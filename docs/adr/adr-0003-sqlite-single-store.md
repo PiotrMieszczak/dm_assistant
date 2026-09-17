@@ -1,18 +1,26 @@
 ---
 title: "ADR-0003: SQLite as the single data store; no graph database in v1"
-status: "Accepted"
+status: "Superseded"
 date: "2026-07-31"
 authors: "Piotr Mieszczak"
 tags: ["architecture", "decision", "storage", "database"]
 supersedes: ""
-superseded_by: ""
+superseded_by: "ADR-0013"
 ---
 
 # ADR-0003: SQLite as the single data store; no graph database in v1
 
 ## Status
 
-Proposed | **Accepted** | Rejected | Superseded | Deprecated
+Proposed | Accepted | Rejected | **Superseded** | Deprecated
+
+> Superseded by [ADR-0013](adr-0013-postgres-for-local-and-hosted.md). This record assumed
+> a local-first, single-user tool, where a database server was pure cost (CON-001). The
+> product now targets local **and** hosted deployment, and in the hosted mode the server
+> exists regardless — so ALT-004's own revisit condition ("if the product ever becomes
+> hosted or multi-user") has been met. Kept because the analysis is still correct under its
+> premise, and ALT-011 — a graph-shaped domain does not imply a graph database — remains in
+> force.
 
 ## Context
 
