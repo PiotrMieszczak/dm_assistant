@@ -22,6 +22,32 @@ Research  →  Issue  →  Board  →  Branch + PR
 wish, not a task. If you cannot write down what "done" looks like, the research stage is
 not finished.
 
+## Levels
+
+Three, using GitHub's native sub-issues — `addSubIssue`, not labels or title prefixes. The
+parent shows its own progress (`2/5`), so the level is visible without anything to keep in
+sync.
+
+| Level | Is | Example |
+|-------|----|---------|
+| **Epic** | A capability a user would name | Dashboard page · Integrate AI |
+| **Story** | One slice of it, shippable on its own | Frontend dashboard page · AI chat agent |
+| **Subtask** | A question to answer or a piece to build | Routing shape · Empty state |
+
+```bash
+# Node ids: gh api graphql -f query='query { repository(owner:"…", name:"…") {
+#   issue(number:N) { id } } }'
+gh api graphql -f query='mutation {
+  addSubIssue(input:{issueId:"<parent>", subIssueId:"<child>"}) { subIssue { number } }
+}'
+```
+
+**State lives in the board column, never in the title.** A title prefixed `research:` goes
+stale the moment the card moves to Ready. The column already says where it is.
+
+**An epic needs no criteria of its own.** It closes when its stories close, so keep its
+body to goal, scope, and a short done-when list. The detail belongs to the children.
+
 ## 1. Research
 
 Find out what actually has to change before proposing how.
