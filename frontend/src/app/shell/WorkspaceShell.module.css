@@ -1,0 +1,46 @@
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail-column) minmax(0, 1fr);
+  grid-template-rows: var(--header-height) minmax(0, 1fr);
+  width: 100vw;
+  height: 100vh;
+}
+
+.main {
+  grid-column: 2;
+  padding: var(--main-padding);
+  overflow-y: auto;
+}
+
+/* Assistant FAB. The panel itself is deferred — see docs/design/overview.md. */
+.fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: var(--radius-button);
+  background: var(--accent);
+  color: var(--surface-app);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--shadow-fab);
+}
+
+.fab:hover {
+  filter: brightness(1.06);
+}
+
+@media (max-width: 900px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .main {
+    grid-column: 1;
+    padding: var(--main-padding-mobile);
+  }
+}
