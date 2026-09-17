@@ -144,4 +144,6 @@ Rules of thumb:
   [docs/adr/README.md](docs/adr/README.md).
 - **The design prototype is a reference, never imported** (BND-004). Transcribe values
   into tokens; rebuild markup with project primitives.
+- **Starting new work?** Research → issue with acceptance criteria → project board →
+  branch and PR linked with `Closes #n`. The `task-flow` skill carries the detail.
 - **Never commit or push unless asked.** Branch first if on `main`.
