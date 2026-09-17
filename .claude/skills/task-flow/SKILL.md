@@ -78,9 +78,11 @@ Columns: **Research → Ready → In progress → Review → Done**
 gh project item-add <number> --owner PiotrMieszczak --url <issue-url>
 ```
 
-> **`gh project` needs gh 2.31 or newer.** This machine runs 2.23, where the subcommand
-> does not exist. Either upgrade, or add the item from the board UI — the flow does not
-> depend on the CLI path.
+> **Two prerequisites, both one-off.** `gh project` needs gh **2.31+** — Debian's apt
+> package is pinned at 2.23, so install from `cli.github.com/packages` rather than
+> `apt install gh`. The token also needs project scope:
+> `gh auth refresh -s project,read:project`. Without both, add the card from the board UI;
+> the flow does not depend on the CLI path.
 
 Move the card when the work moves. A board that lags the branch is worse than no board.
 
