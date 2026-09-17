@@ -1,0 +1,57 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* The kind chips form a column, so they share a width — otherwise
+   "Document" pushes its title further right than "NPC" does. */
+.kind {
+  flex: none;
+  justify-content: center;
+  min-width: 84px;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.detail {
+  margin-top: 3px;
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+
+.at {
+  flex: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}

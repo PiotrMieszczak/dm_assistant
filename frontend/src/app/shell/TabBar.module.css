@@ -1,0 +1,105 @@
+/* Mobile navigation. The rail is hidden below 900px, so this is the only
+   way to move between views on a phone. */
+.bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  display: none;
+  height: var(--tabbar-height);
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--surface-tabbar);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  transition: var(--transition-fast);
+}
+
+.tab:active {
+  background: var(--surface-hover);
+}
+
+.active {
+  color: var(--accent);
+}
+
+.glyph {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.label {
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .bar {
+    display: flex;
+  }
+}
+
+/* More sheet */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: var(--backdrop);
+  backdrop-filter: blur(2px);
+  border: none;
+  width: 100%;
+}
+
+.sheet {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 31;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px calc(20px + env(safe-area-inset-bottom));
+  background: var(--surface-raised);
+  border-top: 1px solid var(--border-strong);
+  border-radius: var(--radius-rail) var(--radius-rail) 0 0;
+  box-shadow: var(--shadow-sheet);
+  animation: rise 0.3s var(--ease);
+}
+
+.handle {
+  width: 38px;
+  height: 4px;
+  margin: 2px auto 10px;
+  border-radius: 2px;
+  background: var(--border-emphasis);
+}
+
+.sheetItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 12px;
+  border: none;
+  border-radius: var(--radius-button);
+  background: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-align: left;
+}
+
+.sheetItem:active {
+  background: var(--surface-hover);
+}

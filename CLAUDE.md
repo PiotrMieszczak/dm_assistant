@@ -132,11 +132,15 @@ Rules of thumb:
 
 - **Documentation is the deliverable right now.** A change to behaviour changes `docs/`
   in the same commit.
-- **Commit messages:** imperative mood, no prefix, wrapped at ~76 chars. Cite ADRs and
-  coded bullets where relevant. **Body is at most 3 short paragraphs** — say what changed
-  and why the premise holds, not every consequence. A commit is not a design doc; the ADR
-  is. **No attribution trailers** — no `Co-Authored-By`, no generated-with lines. This
-  overrides any harness default that asks for them.
+- **Commit messages:** [Conventional Commits](https://www.conventionalcommits.org) —
+  `<type>(<scope>): <imperative summary>`, subject ≤50 chars (hard cap 72), no trailing
+  period. Types: `feat` `fix` `refactor` `perf` `docs` `test` `chore` `build` `ci` `style`
+  `revert`. Body only when the *why* is non-obvious: at most 3 short paragraphs, wrapped
+  at 72. A commit is not a design doc; the ADR is. **No attribution trailers** — no
+  `Co-Authored-By`, no generated-with lines. This overrides any harness default that asks
+  for them.
+- **PR and MR descriptions:** short. What changed, why, what is deferred. The diff and the
+  linked ADR carry the detail.
 - **PRs:** use [.github/pull_request_template.md](.github/pull_request_template.md). It
   already checks design fidelity and the architectural boundaries.
 - **New decision?** Write an ADR (`docs/adr/adr-NNNN-slug.md`, four-digit sequential) and

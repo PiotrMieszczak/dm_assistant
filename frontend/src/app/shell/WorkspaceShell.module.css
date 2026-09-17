@@ -1,0 +1,63 @@
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail-column) minmax(0, 1fr);
+  grid-template-rows: var(--header-height) minmax(0, 1fr);
+  width: 100vw;
+  height: 100vh;
+}
+
+.main {
+  grid-column: 2;
+  padding: var(--main-padding);
+  overflow-y: auto;
+}
+
+/* Assistant FAB. The panel itself is deferred — see docs/design/overview.md. */
+.fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: var(--radius-button);
+  background: var(--accent);
+  color: var(--surface-app);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--shadow-fab);
+}
+
+.fab:hover {
+  filter: brightness(1.06);
+}
+
+@media (max-width: 900px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .main {
+    grid-column: 1;
+    padding: var(--main-padding-mobile);
+  }
+
+  /* Clears the tab bar, and becomes a round icon button — a pill this wide
+     would crowd the bar beneath it. */
+  .fab {
+    right: 18px;
+    bottom: 80px;
+    width: 54px;
+    height: 54px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: var(--shadow-fab-mobile);
+  }
+
+  .fabLabel {
+    display: none;
+  }
+}
