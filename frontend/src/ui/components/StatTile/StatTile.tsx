@@ -1,5 +1,5 @@
-import { Card } from "./Card";
-import { Eyebrow } from "./Eyebrow";
+import { Card } from "../Card";
+import { Eyebrow } from "../Eyebrow";
 import styles from "./StatTile.module.css";
 
 type StatTileProps = {

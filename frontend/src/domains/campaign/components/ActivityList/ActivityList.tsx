@@ -1,6 +1,6 @@
-import { Badge, Card } from "../../../ui/components";
-import { labelFor, toneFor } from "../model/activity";
-import type { ActivityEntry } from "../model/types";
+import { Badge, Card } from "../../../../ui/components";
+import { labelFor, toneFor } from "../../model/activity";
+import type { ActivityEntry } from "../../model/types";
 import styles from "./ActivityList.module.css";
 
 type ActivityListProps = {

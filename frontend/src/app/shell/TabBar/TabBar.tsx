@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NAV_ITEMS, TAB_IDS } from "./navItems";
+import { NAV_ITEMS, TAB_IDS } from "../navItems";
 import styles from "./TabBar.module.css";
 
 type TabBarProps = {

@@ -1,0 +1,32 @@
+.row {
+  display: flex;
+}
+
+.assistantRow {
+  justify-content: flex-start;
+}
+
+.userRow {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: 92%;
+  padding: 10px 12px;
+  background: var(--surface-raised);
+}
+
+.assistant {
+  border-radius: 14px 14px 14px 4px;
+}
+
+.user {
+  border-radius: 14px 14px 4px 14px;
+}
+
+.body {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
