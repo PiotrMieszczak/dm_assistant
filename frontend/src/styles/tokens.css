@@ -26,6 +26,8 @@
   --accent-glow-soft: rgba(232, 184, 122, 0.28);
   --accent-wash: rgba(232, 184, 122, 0.1);
   --success: #7fd4a0;
+  --success-wash: rgba(127, 212, 160, 0.06);
+  --success-border: rgba(127, 212, 160, 0.2);
 
   /* Relationship colors */
   --rel-ally: #7fd4a0;
@@ -61,6 +63,7 @@
   --shadow-fab: 0 8px 28px rgba(232, 184, 122, 0.35);
   --shadow-fab-mobile: 0 10px 30px rgba(232, 184, 122, 0.4);
   --shadow-sheet: 0 -24px 60px rgba(0, 0, 0, 0.6);
+  --shadow-slideover: -24px 0 60px rgba(0, 0, 0, 0.6);
 
   /* Layout */
   --header-height: 72px;
@@ -69,6 +72,7 @@
   --rail-column: 76px;
   --rail-offset-left: 24px;
   --panel-width: 400px;
+  --panel-width-mobile: min(420px, 100vw);
   --tabbar-height: calc(64px + env(safe-area-inset-bottom));
   --main-padding: 28px 32px 48px;
   --main-padding-mobile: 20px 18px calc(90px + env(safe-area-inset-bottom));
@@ -76,6 +80,7 @@
   /* Motion */
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --transition-rail: width 0.26s var(--ease), padding 0.26s;
+  --transition-slideover: transform 0.3s var(--ease);
   --transition-fast: all 0.15s;
 }
 

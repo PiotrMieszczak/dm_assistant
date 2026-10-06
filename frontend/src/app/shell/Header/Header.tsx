@@ -1,4 +1,4 @@
-import type { Campaign } from "../../domains/campaign";
+import type { Campaign } from "../../../domains/campaign";
 import styles from "./Header.module.css";
 
 type HeaderProps = {

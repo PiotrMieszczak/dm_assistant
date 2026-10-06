@@ -231,13 +231,23 @@ frontend/
 │   ├── app/                       # composition root
 │   │   ├── router.tsx
 │   │   ├── providers.tsx          # Query client, theme, error boundary
-│   │   └── shell/                 # header, nav rail, panel slot, mobile tab bar
+│   │   └── shell/                 # one folder per piece; index.ts is the import
+│   │       ├── Header/
+│   │       ├── NavRail/
+│   │       ├── TabBar/
+│   │       ├── WorkspaceShell/
+│   │       ├── navItems.ts
+│   │       ├── store.ts
+│   │       └── index.ts
 │   │
 │   ├── domains/                   # bounded contexts. The unit of ownership.
 │   │   ├── campaign/
 │   │   │   ├── model/             # types, value objects, pure derivations
 │   │   │   ├── api/               # endpoints + query hooks
-│   │   │   ├── components/        # domain-specific UI
+│   │   │   ├── components/        # one folder per component + barrel
+│   │   │   │   ├── ActivityList/
+│   │   │   │   ├── StatGrid/
+│   │   │   │   └── index.ts
 │   │   │   ├── store.ts           # Zustand slice, if needed
 │   │   │   └── index.ts           # PUBLIC API — the only legal import path
 │   │   ├── cast/
@@ -258,8 +268,12 @@ frontend/
 │   ├── screens/                   # routed pages. Compose domains, own no logic.
 │   ├── ui/                        # design-system primitives. Knows no domain.
 │   │   ├── primitives/            # Radix wrappers
-│   │   ├── components/            # Button, Input, Card, Badge, ProgressBar
-│   │   └── *.module.css
+│   │   └── components/            # one folder per primitive + barrel
+│   │       ├── Card/
+│   │       │   ├── Card.tsx
+│   │       │   ├── Card.module.css
+│   │       │   └── index.ts
+│   │       └── index.ts
 │   ├── styles/                    # tokens.css, reset, global
 │   └── lib/                       # http client, SSE reader, hooks, utils
 │
@@ -290,6 +304,10 @@ the codebase.
 
 `ui/` staying domain-ignorant is what makes Storybook worth having: a primitive that
 imports a Character type cannot be rendered in isolation.
+
+**A component is a folder.** `ComponentName/ComponentName.tsx`, its CSS module, and an
+`index.ts` barrel. Siblings import the folder, never the file. Shared styles are not
+parked on a neighbour — if two components need different rules, they have two modules.
 
 ### How much tactical DDD on the client
 

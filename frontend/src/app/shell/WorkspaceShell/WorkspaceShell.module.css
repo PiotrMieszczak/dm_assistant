@@ -1,0 +1,113 @@
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail-column) minmax(0, 1fr) 0;
+  grid-template-rows: var(--header-height) minmax(0, 1fr);
+  width: 100vw;
+  height: 100vh;
+}
+
+.panelOpen {
+  grid-template-columns: var(--rail-column) minmax(0, 1fr) var(--panel-width);
+}
+
+.main {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  padding: var(--main-padding);
+  overflow-y: auto;
+}
+
+.panelSlot {
+  grid-column: 3;
+  grid-row: 2;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--surface-sunken);
+  border-left: 1px solid var(--border-subtle);
+}
+
+.backdrop {
+  display: none;
+}
+
+.fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 15;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: var(--radius-button);
+  background: var(--accent);
+  color: var(--surface-app);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--shadow-fab);
+}
+
+.fab:hover {
+  filter: brightness(1.06);
+}
+
+@media (max-width: 900px) {
+  .shell,
+  .panelOpen {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .main {
+    grid-column: 1;
+    padding: var(--main-padding-mobile);
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 24;
+    width: 100%;
+    border: none;
+    background: var(--backdrop);
+    backdrop-filter: blur(2px);
+  }
+
+  .panelSlot {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 25;
+    width: var(--panel-width-mobile);
+    height: auto;
+    grid-column: 1;
+    grid-row: 2;
+    transform: translateX(105%);
+    transition: var(--transition-slideover);
+    box-shadow: var(--shadow-slideover);
+  }
+
+  .panelOpen .panelSlot {
+    transform: translateX(0);
+  }
+
+  .fab {
+    right: 18px;
+    bottom: 80px;
+    width: 54px;
+    height: 54px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: var(--shadow-fab-mobile);
+  }
+
+  .fabLabel {
+    display: none;
+  }
+}

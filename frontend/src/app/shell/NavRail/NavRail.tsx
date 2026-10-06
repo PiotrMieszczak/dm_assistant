@@ -1,4 +1,4 @@
-import { NAV_ITEMS } from "./navItems";
+import { NAV_ITEMS } from "../navItems";
 import styles from "./NavRail.module.css";
 
 type NavRailProps = {

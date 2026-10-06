@@ -1,5 +1,5 @@
-import { StatTile } from "../../../ui/components";
-import type { CampaignStats } from "../model/types";
+import { StatTile } from "../../../../ui/components";
+import type { CampaignStats } from "../../model/types";
 import styles from "./StatGrid.module.css";
 
 type StatGridProps = {
