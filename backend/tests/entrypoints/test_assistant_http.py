@@ -20,7 +20,9 @@ def _events(body: str) -> list[tuple[str, dict]]:
 
 
 def test_create_conversation_and_stream_a_research_turn(client: TestClient) -> None:
-    created = client.post("/api/v1/campaigns/ashfall/conversations", json={"mode": "research"})
+    created = client.post(
+        "/api/v1/campaigns/ashfall/conversations", json={"mode": "research"}
+    )
     assert created.status_code == 201
     payload = created.json()
     assert payload["mode"] == "research"
@@ -41,7 +43,9 @@ def test_create_conversation_and_stream_a_research_turn(client: TestClient) -> N
     assert names[-2] == "TextMessageEnd"
     assert names[-1] == "RunFinished"
 
-    history = client.get(f"/api/v1/campaigns/ashfall/conversations/{conversation_id}/messages")
+    history = client.get(
+        f"/api/v1/campaigns/ashfall/conversations/{conversation_id}/messages"
+    )
     assert history.status_code == 200
     messages = history.json()
     assert len(messages) == 2
@@ -54,6 +58,8 @@ def test_create_conversation_and_stream_a_research_turn(client: TestClient) -> N
 def test_wrong_campaign_is_404(client: TestClient) -> None:
     created = client.post("/api/v1/campaigns/ashfall/conversations", json={})
     conversation_id = created.json()["id"]
-    missing = client.get(f"/api/v1/campaigns/other/conversations/{conversation_id}/messages")
+    missing = client.get(
+        f"/api/v1/campaigns/other/conversations/{conversation_id}/messages"
+    )
     assert missing.status_code == 404
     assert missing.json() == {"detail": "conversation not found"}

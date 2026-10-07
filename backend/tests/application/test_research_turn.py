@@ -1,5 +1,4 @@
 import pytest
-
 from app.application.assistant import ListMessages, RunAssistantTurn, StartConversation
 from app.application.dto import TurnDelta, TurnFinished, TurnStarted
 from app.domain.assistant import Mode, Role
@@ -31,7 +30,9 @@ def test_turn_persists_user_and_assistant(
     assert any(isinstance(event, TurnDelta) for event in events)
     assert isinstance(events[-1], TurnFinished)
 
-    messages = list_messages.execute(campaign_id="ashfall", conversation_id=conversation.id)
+    messages = list_messages.execute(
+        campaign_id="ashfall", conversation_id=conversation.id
+    )
     assert [message.role for message in messages] == [Role.USER, Role.ASSISTANT]
     assert all(message.mode is Mode.RESEARCH for message in messages)
     assert messages[0].content == "What did we establish about Doran Vey?"
@@ -40,7 +41,11 @@ def test_turn_persists_user_and_assistant(
 
 def test_unknown_conversation_is_not_found(run_turn: RunAssistantTurn) -> None:
     with pytest.raises(NotFound):
-        next(run_turn.execute(campaign_id="ashfall", conversation_id=99, content="hello"))
+        next(
+            run_turn.execute(
+                campaign_id="ashfall", conversation_id=99, content="hello"
+            )
+        )
 
 
 def test_campaign_scope_hides_other_campaigns(

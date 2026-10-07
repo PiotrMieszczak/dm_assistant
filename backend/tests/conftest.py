@@ -1,14 +1,13 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
-
 from app.adapters.clock.frozen import FrozenClock
 from app.adapters.llm.fake import FakeLLM
 from app.adapters.persistence.memory.conversations import InMemoryConversationRepo
 from app.application.assistant import ListMessages, RunAssistantTurn, StartConversation
 from app.composition import UseCases, build_app, build_use_cases
 
-FROZEN = datetime(2026, 10, 7, 14, 0, tzinfo=timezone.utc)
+FROZEN = datetime(2026, 10, 7, 14, 0, tzinfo=UTC)
 
 
 @pytest.fixture

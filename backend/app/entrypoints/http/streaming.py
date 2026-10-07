@@ -8,7 +8,7 @@ def sse(event: str, data: dict[str, object]) -> str:
 
 
 def ag_ui_frame(event: TurnEvent) -> str:
-    """Map application turn events to AG-UI (ADR-0009). Protocol lives here, not in the loop."""
+    """Map turn events to AG-UI (ADR-0009). Protocol stays out of the loop."""
     if isinstance(event, TurnStarted):
         started = sse(
             "RunStarted",

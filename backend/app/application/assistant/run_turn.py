@@ -48,7 +48,8 @@ class RunAssistantTurn:
         history = self._repo.get(conversation.id)
         if history is None:
             raise NotFound("conversation not found")
-        for delta in self._llm.stream(mode=conversation.mode, messages=history.messages):
+        deltas = self._llm.stream(mode=conversation.mode, messages=history.messages)
+        for delta in deltas:
             chunks.append(delta)
             yield TurnDelta(message_id=assistant_id, text=delta)
 

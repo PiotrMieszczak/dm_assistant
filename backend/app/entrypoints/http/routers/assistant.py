@@ -56,8 +56,13 @@ def create_conversation(
     return _conversation_out(view)
 
 
-@router.get("/conversations/{conversation_id}/messages", response_model=list[MessageOut])
-def list_messages(campaign_id: str, conversation_id: int, request: Request) -> list[MessageOut]:
+@router.get(
+    "/conversations/{conversation_id}/messages",
+    response_model=list[MessageOut],
+)
+def list_messages(
+    campaign_id: str, conversation_id: int, request: Request
+) -> list[MessageOut]:
     return [
         _message_out(view)
         for view in _list(request).execute(

@@ -23,7 +23,13 @@ def _py_files(package: str) -> list[Path]:
 
 
 def test_domain_does_not_import_the_rest_of_the_app() -> None:
-    banned = {"app.ports", "app.application", "app.adapters", "app.entrypoints", "app.composition"}
+    banned = {
+        "app.ports",
+        "app.application",
+        "app.adapters",
+        "app.entrypoints",
+        "app.composition",
+    }
     for path in _py_files("domain"):
         imported = _imports(path)
         leaked = {
@@ -57,4 +63,5 @@ def test_provider_sdks_only_under_llm_gateway() -> None:
         hit = imported & FORBIDDEN_SDKS
         if not hit:
             continue
-        assert "adapters/llm" in path.as_posix(), f"{path} imports {hit} outside adapters/llm"
+        location = path.as_posix()
+        assert "adapters/llm" in location, f"{path} imports {hit} outside adapters/llm"
