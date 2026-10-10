@@ -78,4 +78,4 @@ def downgrade() -> None:
     op.drop_table("message")
     op.drop_table("conversation")
     op.drop_table("campaign")
-    op.execute("DROP EXTENSION IF EXISTS vector")
+    # The vector extension stays: it may predate this migration or serve other objects.
