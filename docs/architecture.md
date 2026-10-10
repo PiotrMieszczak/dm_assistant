@@ -78,7 +78,8 @@ place a model is invoked.
 ## Repository layout
 
 A plain workspace, not an Nx monorepo — two apps and a small shared library do not need
-a build orchestrator.
+a build orchestrator. [folder-structure.md](folder-structure.md) is authoritative for
+both trees; this is the outline.
 
 ```
 dm_assistant/
@@ -93,15 +94,21 @@ dm_assistant/
 │   │   ├── styles/           # tokens.css, reset, global
 │   │   └── lib/              # api client, hooks, utils
 │   └── vite.config.ts
-├── backend/
+├── backend/                  # hexagonal: ports and adapters
 │   ├── app/
-│   │   ├── api/              # routers per resource
-│   │   ├── core/             # config, db session
-│   │   ├── models/           # SQLAlchemy models
-│   │   ├── ingestion/        # extract, chunk, index (no LLM)
-│   │   ├── retrieval/        # hybrid search, fusion, context assembly
-│   │   └── gateway/          # provider abstraction
+│   │   ├── domain/           # entities and values, stdlib only
+│   │   ├── ports/            # protocols: repositories, llm, search, files, clock
+│   │   ├── application/      # use cases: assistant turn, upload, ingest, retrieval
+│   │   ├── adapters/
+│   │   │   ├── persistence/  # sqlalchemy (PostgreSQL, migrations) + memory
+│   │   │   ├── llm/          # the Gateway: claude, ollama, fake, prompts
+│   │   │   ├── search/       # hybrid tsvector + pgvector
+│   │   │   ├── extraction/   # PyMuPDF, OCR (no LLM)
+│   │   │   └── files/        # FileStore: local disk, object store
+│   │   ├── entrypoints/      # http routers, worker, cli
+│   │   └── composition.py    # the only module wiring ports to adapters
 │   └── pyproject.toml
+├── compose.yaml              # db, backend, frontend for local use
 └── README.md
 ```
 
@@ -281,18 +288,19 @@ and wrong for the app: server data and UI chrome have different lifetimes.
 ## Boundaries that matter
 
 **BND-001 — No generative model in the ingestion path.** Enforced structurally:
-`ingestion/` has no import path to `gateway/`. A test asserts this. The embedding model is
+the ingestion use cases and `adapters/extraction/` have no import path to `adapters/llm/`
+(the Gateway). A test asserts this. The embedding model is
 not in scope: it derives vectors from the document's own text and writes no content
 ([ADR-0014](adr/adr-0014-hybrid-retrieval.md) IMP-008).
 
 **BND-002 — All model calls go through the Gateway.** No provider SDK is imported outside
-`gateway/`. Provider switching is configuration, not code.
+`adapters/llm/`. Provider switching is configuration, not code.
 
 **BND-003 — Campaign scoping is enforced server-side.** Every query filters by
 `campaign_id`. The frontend never sees another campaign's data.
 
 **BND-006 — No agent framework owns the loop.** The tool loop is plain code in
-`api/assistant.py`, bounded to a fixed number of iterations. A framework there would also
+`application/assistant/run_turn.py`, bounded to a fixed number of iterations. A framework there would also
 own prompt assembly, moving the grounding rule out of the single place that enforces it
 ([ADR-0011](adr/adr-0011-assistant-tools.md)).
 
@@ -304,7 +312,7 @@ the other direction ([ADR-0012](adr/adr-0012-two-ai-modes.md)).
 
 **BND-007 — No tool writes to the campaign.** `propose_*` tools return drafts; the GM
 confirms through the ordinary create endpoints. A test asserts no proposal tool is
-reachable from `ingestion/`, keeping [ADR-0002](adr/adr-0002-deterministic-extraction.md)
+reachable from the ingestion path, keeping [ADR-0002](adr/adr-0002-deterministic-extraction.md)
 structural rather than conventional.
 
 **BND-005 — Provider streams are normalised inside the Gateway.** Model-provider event

@@ -57,6 +57,20 @@ jobs:
 
   backend:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: dm
+          POSTGRES_PASSWORD: dm
+          POSTGRES_DB: dm_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U dm -d dm_test"
+          --health-interval 3s
+          --health-timeout 3s
+          --health-retries 20
     steps:
       - uses: actions/checkout@v4
 
@@ -92,4 +106,6 @@ jobs:
       - name: Test
         if: steps.check.outputs.present == 'true'
         working-directory: backend
-        run: pytest
+        env:
+          TEST_DATABASE_URL: postgresql+psycopg://dm:dm@localhost:5432/dm_test
+        run: pytest -rs

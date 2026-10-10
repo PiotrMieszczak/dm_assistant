@@ -383,11 +383,14 @@ Session bodies are chunked and indexed like documents, so past sessions are retr
 
 | Entity | Key fields |
 |--------|-----------|
-| `conversation` | `id`, `campaign_id`, `started_at` |
-| `message` | `id`, `conversation_id`, `role` (`user`\|`assistant`), `content`, `created_at`, `tool_label?` |
+| `conversation` | `id`, `campaign_id`, `mode`, `started_at` |
+| `message` | `id`, `conversation_id`, `role` (`user`\|`assistant`), `content`, `mode`, `created_at`, `tool_label?` |
 | `citation` | `id`, `message_id`, `chunk_id`, `quote?` |
 
-Citations satisfy AC-002 and make grounding auditable.
+Citations satisfy AC-002 and make grounding auditable. `mode` (`research` today;
+`creative` and in-character to follow) is stored on both the conversation and each message,
+so a message's provenance stays readable after the fact
+([ADR-0012](adr/adr-0012-two-ai-modes.md) IMP-007, AC-016).
 
 ### User
 
