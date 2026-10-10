@@ -10,8 +10,8 @@ factions, a quest log, session records, and a knowledge graph of how everyone co
 
 ## Status
 
-**Pre-implementation.** This repository currently contains documentation only. No
-application code has been written yet.
+Frontend workspace shell is in progress. The backend hexagon is scaffolded for a
+Research chat turn against a fake LLM (no Postgres, no provider SDKs yet).
 
 Start with [docs/README.md](docs/README.md).
 
