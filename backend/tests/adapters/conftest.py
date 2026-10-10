@@ -49,14 +49,20 @@ def migrated(database_url: str) -> str:
 
 
 @pytest.fixture
+def alembic_config(migrated: str) -> Config:
+    return _alembic(migrated)
+
+
+@pytest.fixture
 def sessions(migrated: str) -> Iterator[sessionmaker[Session]]:
     factory = create_session_factory(migrated)
     with factory.begin() as session:
         session.execute(
             text("TRUNCATE message, conversation, campaign RESTART IDENTITY CASCADE")
         )
+        # system rows are reference data from migration 0002 and are not truncated.
         session.add_all(
-            CampaignRow(id=cid, name=cid.title(), system="D&D 2024", tint="#000000")
+            CampaignRow(id=cid, name=cid.title(), system_id="dnd-2024", tint="#000000")
             for cid in sorted(CAMPAIGNS)
         )
     yield factory

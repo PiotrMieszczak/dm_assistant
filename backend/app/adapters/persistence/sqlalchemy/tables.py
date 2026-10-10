@@ -19,6 +19,15 @@ class Base(DeclarativeBase):
     metadata = MetaData(naming_convention=NAMING)
 
 
+class SystemRow(Base):
+    """A game system campaigns are played in (DEC-013). Reference data."""
+
+    __tablename__ = "system"
+
+    id: Mapped[str] = mapped_column(Text, primary_key=True)
+    name: Mapped[str] = mapped_column(Text, unique=True)
+
+
 class CampaignRow(Base):
     """owner_id arrives with auth (ADR-0008, DEC-005). No owner scope until then."""
 
@@ -26,7 +35,10 @@ class CampaignRow(Base):
 
     id: Mapped[str] = mapped_column(Text, primary_key=True)
     name: Mapped[str] = mapped_column(Text)
-    system: Mapped[str] = mapped_column(Text)
+    # Exactly one system per campaign; a system in use cannot be deleted.
+    system_id: Mapped[str] = mapped_column(
+        ForeignKey("system.id", ondelete="RESTRICT"), index=True
+    )
     tint: Mapped[str] = mapped_column(Text)
     image_path: Mapped[str | None] = mapped_column(Text)
     last_played_at: Mapped[date | None] = mapped_column(Date)
