@@ -10,6 +10,7 @@ database in both local and hosted deployment
 erDiagram
     USER ||--o{ CAMPAIGN : owns
     USER ||--o{ OAUTH_ACCOUNT : "linked to"
+    SYSTEM ||--o{ CAMPAIGN : "is played in"
 
     CAMPAIGN ||--o{ DOCUMENT : contains
     CAMPAIGN ||--o{ CHARACTER : contains
@@ -56,12 +57,25 @@ The top-level isolation boundary. Everything else belongs to exactly one campaig
 |-------|------|-------|
 | `id` | text PK | slug, e.g. `ashfall` |
 | `name` | text | "Ashfall Reach" |
-| `system` | text | **Required.** `D&D 2024` \| `Traveller 2e` |
+| `system_id` | text FK | **Required.** → `system.id`; exactly one per campaign (DEC-013) |
 | `image_path` | text? | user upload; falls back to a tint gradient |
 | `tint` | text | hex accent for the placeholder banner |
 | `session_count` | int | derived from sessions |
 | `last_played_at` | date? | drives the "Jul 5" meta line |
 | `created_at` | timestamp | |
+
+### System
+
+The game system a campaign is played in. Reference data: the rows ship with the schema
+migration, and the campaign picker offers them.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `id` | text PK | slug: `dnd-2024`, `traveller-2e` |
+| `name` | text UNIQUE | "D&D 2024", "Traveller 2e" |
+
+Many-to-one: each campaign has exactly one system, and a system is shared by any number of
+campaigns. A system that a campaign uses cannot be deleted.
 
 ### Character
 
@@ -481,6 +495,13 @@ opposite of what makes a world feel alive.
 Three common templates use three different beat vocabularies. An enum would have privileged
 one and made the others awkward, and templates are prompts for a GM outlining, not a schema
 to conform to.
+
+**DEC-013 — The game system is a table, referenced by the campaign.**
+Free text let "D&D 2024", "DnD 2024", and a typo become three systems silently, and the
+add-campaign modal needs a fixed list to offer. A `system` row gives the picker its options
+and lets the database refuse a campaign without one. The relationship is many-to-one, not
+one-to-one: one system serves many campaigns. A Postgres enum was rejected because adding a
+system would need a type migration rather than a row.
 
 **DEC-004 — GM notes are private by construction.**
 `notes` on characters and factions hold spoilers ("Do not reveal before Session 15").

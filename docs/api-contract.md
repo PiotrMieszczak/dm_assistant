@@ -57,20 +57,30 @@ not `403` — a `403` confirms the resource exists.
 | Method | Path | Purpose |
 |--------|------|---------|
 | `GET` | `/campaigns` | List for the picker |
-| `POST` | `/campaigns` | Create — `name` and `system` required |
+| `POST` | `/campaigns` | Create — `name` and `systemId` required |
 | `GET` | `/campaigns/{id}` | Single campaign |
 | `PATCH` | `/campaigns/{id}` | Rename, change image or tint |
 | `DELETE` | `/campaigns/{id}` | Delete campaign and all contents |
 
 ```jsonc
 // POST /campaigns
-{ "name": "Ashfall Reach", "system": "D&D 2024", "tint": "#E8B87A" }
+{ "name": "Ashfall Reach", "systemId": "dnd-2024", "tint": "#E8B87A" }
 // 201
-{ "id": "ashfall", "name": "Ashfall Reach", "system": "D&D 2024",
+{ "id": "ashfall", "name": "Ashfall Reach",
+  "system": { "id": "dnd-2024", "name": "D&D 2024" },
   "tint": "#E8B87A", "imageUrl": null, "sessionCount": 0, "lastPlayedAt": null }
 ```
 
+An unknown `systemId` is a `422`.
+
 `POST /campaigns/{id}/image` — multipart, sets the banner.
+
+`GET /systems` — the systems the add-campaign picker offers.
+
+```jsonc
+// GET /systems
+[{ "id": "dnd-2024", "name": "D&D 2024" }, { "id": "traveller-2e", "name": "Traveller 2e" }]
+```
 
 ## Documents
 

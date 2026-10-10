@@ -15,7 +15,7 @@ DEV_CAMPAIGNS = [
     {
         "id": "ashfall",
         "name": "The Ashfall Compact",
-        "system": "D&D 2024",
+        "system_id": "dnd-2024",  # systems themselves come from migration 0002
         "tint": "#8a5a3c",
     },
 ]
