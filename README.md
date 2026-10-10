@@ -146,9 +146,9 @@ frontend/src/
 ```
 
 **One rule does most of the work:** a domain may only be imported through its `index.ts`.
-Deep imports are what turn a domain split into a ball of mud. Both rule sets run in CI —
-`import-linter` on Python, `eslint-plugin-boundaries` on TypeScript — so a violation fails
-the build rather than drifting quietly.
+Deep imports are what turn a domain split into a ball of mud. On Python, `import-linter`
+fails the build on a violation. On TypeScript the rules are not enforced by a tool yet;
+see [Enforcement](docs/folder-structure.md#enforcement) for what is and is not checked.
 
 ## Two ideas worth knowing up front
 
