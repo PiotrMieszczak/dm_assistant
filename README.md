@@ -13,11 +13,40 @@ factions, a quest log, session records, and a knowledge graph of how everyone co
 Frontend workspace shell is in progress. The backend hexagon is scaffolded for a
 Research chat turn against a fake LLM (no Postgres, no provider SDKs yet).
 
-Both apps start together with `docker compose up --build` from this directory
-([backend/README.md](backend/README.md)). The site is http://localhost:8080 and the API
-docs are http://localhost:8000/docs.
-
 Start with [docs/README.md](docs/README.md).
+
+## Run it with Docker
+
+**You need** a Docker runtime with Compose v2: [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+or, on macOS, [OrbStack](https://orbstack.dev/). Check with `docker compose version`.
+Nothing else: Python and Node run inside the containers.
+
+From the repository root:
+
+```bash
+docker compose up --build
+```
+
+The first build takes a few minutes. When the logs settle:
+
+| URL | What |
+|-----|------|
+| http://localhost:8080 | The app. nginx serves the SPA and proxies `/api` to the backend |
+| http://localhost:8000/docs | The API on its own, with the interactive OpenAPI UI |
+
+Everyday commands:
+
+| Command | Does |
+|---------|------|
+| `docker compose up --build -d` | Start in the background (`-d`); rebuild after code changes |
+| `docker compose logs -f backend` | Follow one service's logs |
+| `docker compose ps` | What is running, and whether it is healthy |
+| `docker compose down` | Stop and remove the containers |
+
+The backend reports healthy only once it serves requests; the frontend waits for that.
+Conversations are kept in memory for now, so a restarted backend starts empty. To work on
+one app without containers, see [backend/README.md](backend/README.md) and
+`frontend/package.json`.
 
 ## Documentation
 
