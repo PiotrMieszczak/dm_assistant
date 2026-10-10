@@ -22,6 +22,7 @@ knowing why it was made, it belongs in an ADR.
 | [0012](adr-0012-two-ai-modes.md) | Two AI modes — Research and Creative — plus in-character roleplay | Accepted |
 | [0013](adr-0013-postgres-for-local-and-hosted.md) | PostgreSQL as the single store for local and hosted | Accepted |
 | [0014](adr-0014-hybrid-retrieval.md) | Hybrid keyword + vector retrieval with embedded chunks | Accepted |
+| [0015](adr-0015-frontend-api-contract.md) | Generated API types and a frontend adapter layer | Accepted |
 
 ## Format
 

@@ -21,7 +21,7 @@ on demand.
 | Colors, type, spacing, radii | [docs/design/reference.md](docs/design/reference.md) | Token values only; look up, don't memorise |
 | HTTP surface | [docs/api-contract.md](docs/api-contract.md) | — |
 | Delivery phases, gates | [docs/roadmap.md](docs/roadmap.md) | — |
-| Why a decision was made | [docs/adr/README.md](docs/adr/README.md) → the specific ADR | Never read all 12 |
+| Why a decision was made | [docs/adr/README.md](docs/adr/README.md) → the specific ADR | Never read them all |
 
 **Order of operations for a non-trivial task:** read this file → read the one or two `docs/`
 pages the task touches → read a specific ADR only if you are about to contradict it. Stop
@@ -61,6 +61,7 @@ decision is a *new* ADR that supersedes the old one, never an edit to history.
 | [0012](docs/adr/adr-0012-two-ai-modes.md) | Research / Creative / in-character modes | Accepted |
 | [0013](docs/adr/adr-0013-postgres-for-local-and-hosted.md) | PostgreSQL for local **and** hosted | Accepted |
 | [0014](docs/adr/adr-0014-hybrid-retrieval.md) | Hybrid keyword + vector retrieval | Accepted |
+| [0015](docs/adr/adr-0015-frontend-api-contract.md) | Generated API types; FE adapters, DTOs stay in `api/` | Accepted |
 
 Do not cite 0003, 0005, 0007, or 0010 as current. Cite what superseded them.
 

@@ -52,7 +52,7 @@ flowchart TB
         UI --> LIB
     end
 
-    RULE["<b>The rule, both sides:</b> dependencies point inward.<br/>A domain is imported only through its index.ts.<br/>Enforced in CI — import-linter · eslint-plugin-boundaries"]
+    RULE["<b>The rule, both sides:</b> dependencies point inward.<br/>A domain is imported only through its index.ts.<br/>Backend enforced by import-linter · frontend rules see Enforcement"]
 
     BE -.-> RULE
     FE -.-> RULE
@@ -243,7 +243,10 @@ frontend/
 │   ├── domains/                   # bounded contexts. The unit of ownership.
 │   │   ├── campaign/
 │   │   │   ├── model/             # types, value objects, pure derivations
-│   │   │   ├── api/               # endpoints + query hooks
+│   │   │   ├── api/               # the domain's edge to the backend
+│   │   │   │   ├── endpoints.ts   # requests; DTOs in, DTOs out
+│   │   │   │   ├── adapters.ts    # pure DTO ⇄ model functions (ADR-0015)
+│   │   │   │   └── use*.ts        # query hooks; return models only
 │   │   │   ├── components/        # one folder per component + barrel
 │   │   │   │   ├── ActivityList/
 │   │   │   │   ├── StatGrid/
@@ -276,6 +279,7 @@ frontend/
 │   │       └── index.ts
 │   ├── styles/                    # tokens.css, reset, global
 │   └── lib/                       # http client, SSE reader, hooks, utils
+│       └── api/                   # schema.d.ts generated from openapi.json; typed client
 │
 ├── tests/
 │   ├── e2e/
@@ -309,6 +313,19 @@ imports a Character type cannot be rendered in isolation.
 `index.ts` barrel. Siblings import the folder, never the file. Shared styles are not
 parked on a neighbour — if two components need different rules, they have two modules.
 
+### DTOs stop at `api/`
+
+Wire types are generated from the backend's OpenAPI document into `lib/api/schema.d.ts`
+([ADR-0015](adr/adr-0015-frontend-api-contract.md)). They may be imported only by
+`lib/api/` and a domain's `api/` folder. `adapters.ts` turns a DTO into the domain's model
+on the way in, and a model into a request body on the way out, so hooks and components
+never see a wire shape. A backend rename then touches one adapter function.
+
+Adapters are pure functions over plain, immutable data, never classes: React re-renders on
+reference change, TanStack Query shares structure only for plain objects, and a cached
+class instance loses its prototype. Classes are for infrastructure with a lifecycle, such
+as the SSE reader.
+
 ### How much tactical DDD on the client
 
 Bounded contexts and published interfaces: yes, throughout. Tactical patterns: only in
@@ -334,12 +351,14 @@ before a request is made, the client models it properly.
 
 ## Enforcement
 
-Prose boundaries drift. Both rule sets run in CI, and a violation fails the build.
+Prose boundaries drift. A rule is enforced only when a tool fails the build on it; until
+then it is a convention, and this table says which is which.
 
-| Side | Tool | Enforces |
-|------|------|----------|
-| Backend | `import-linter` contracts in `pyproject.toml` | the layer table |
-| Frontend | `eslint-plugin-boundaries` + `no-restricted-imports` | the import table, deep-import ban |
+| Side | Tool | Enforces | State |
+|------|------|----------|-------|
+| Backend | `import-linter` contracts in `pyproject.toml` | the layer table | **Enforced** in CI |
+| Frontend | `oxlint` `no-restricted-imports` | DTOs only in `api/` ([ADR-0015](adr/adr-0015-frontend-api-contract.md)) | Planned in [#27](https://github.com/PiotrMieszczak/dm_assistant/issues/27) |
+| Frontend | not chosen | the import table, deep-import ban | **Convention only** — no tool yet |
 
 `tests/architecture/` additionally asserts what lint cannot: that no SDK is imported
 outside its adapter, and that `application` is reachable without importing a single
