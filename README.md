@@ -10,8 +10,8 @@ factions, a quest log, session records, and a knowledge graph of how everyone co
 
 ## Status
 
-Frontend workspace shell is in progress. The backend hexagon is scaffolded for a
-Research chat turn against a fake LLM (no Postgres, no provider SDKs yet).
+Frontend workspace shell is in progress. The backend runs a Research chat turn against a
+fake LLM, with conversations stored in PostgreSQL (no provider SDKs yet).
 
 Start with [docs/README.md](docs/README.md).
 
@@ -32,7 +32,9 @@ The first build takes a few minutes. When the logs settle:
 | URL | What |
 |-----|------|
 | http://localhost:8080 | The app. nginx serves the SPA and proxies `/api` to the backend |
-| http://localhost:8000/docs | The API on its own, with the interactive OpenAPI UI |
+| http://localhost:8000/docs | The API contract, generated from the code: OpenAPI (Swagger UI), with "Try it out" |
+| http://localhost:8000/redoc | The same contract as a readable reference page; raw JSON at `/openapi.json` |
+| `localhost:5432` | PostgreSQL, user `dm`, password `dm`, database `dm_assistant` |
 
 Everyday commands:
 
@@ -41,12 +43,13 @@ Everyday commands:
 | `docker compose up --build -d` | Start in the background (`-d`); rebuild after code changes |
 | `docker compose logs -f backend` | Follow one service's logs |
 | `docker compose ps` | What is running, and whether it is healthy |
-| `docker compose down` | Stop and remove the containers |
+| `docker compose down` | Stop and remove the containers; the database volume is kept |
+| `docker compose down -v` | The same, and delete all database data |
 
-The backend reports healthy only once it serves requests; the frontend waits for that.
-Conversations are kept in memory for now, so a restarted backend starts empty. To work on
-one app without containers, see [backend/README.md](backend/README.md) and
-`frontend/package.json`.
+Start-up order: the database becomes healthy, the backend applies migrations and seeds a
+demo campaign (`ashfall`), then the frontend starts. Conversations survive restarts. To
+browse the database or work on one app without containers, see
+[backend/README.md](backend/README.md#database) and `frontend/package.json`.
 
 ## Documentation
 

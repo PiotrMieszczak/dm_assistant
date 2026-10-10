@@ -3,7 +3,10 @@ from app.domain.shared import NotFound
 
 
 class InMemoryConversationRepo:
-    def __init__(self) -> None:
+    def __init__(self, campaigns: set[str] | None = None) -> None:
+        # None accepts any campaign id. A set mirrors the SQL foreign key, for the
+        # contract suite.
+        self._campaigns = campaigns
         self._conversations: dict[int, Conversation] = {}
         self._next_conversation_id = 1
         self._next_message_id = 1
@@ -19,6 +22,11 @@ class InMemoryConversationRepo:
         return ident
 
     def save(self, conversation: Conversation) -> None:
+        if (
+            self._campaigns is not None
+            and conversation.campaign_id not in self._campaigns
+        ):
+            raise NotFound("campaign not found")
         self._conversations[conversation.id] = conversation
 
     def get(self, conversation_id: int) -> Conversation | None:

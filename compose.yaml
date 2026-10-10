@@ -1,7 +1,35 @@
 services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: dm
+      POSTGRES_PASSWORD: dm # local development only
+      POSTGRES_DB: dm_assistant
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "dm", "-d", "dm_assistant"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "5432:5432" # lets a database client on your machine connect
+
   backend:
     build:
       context: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://dm:dm@db:5432/dm_assistant
+    command:
+      - sh
+      - -c
+      - >-
+        alembic upgrade head &&
+        python -m app.adapters.persistence.sqlalchemy.seed &&
+        exec uvicorn app.composition:build_app --factory --host 0.0.0.0 --port 8000
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test:
         [
@@ -24,3 +52,6 @@ services:
         condition: service_healthy
     ports:
       - "8080:80"
+
+volumes:
+  pgdata:
