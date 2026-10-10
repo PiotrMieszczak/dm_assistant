@@ -4,6 +4,7 @@ from pathlib import Path
 APP = Path(__file__).resolve().parents[2] / "app"
 
 FORBIDDEN_SDKS = {"anthropic", "ollama", "openai", "langchain", "pydantic_ai"}
+DATABASE_LIBRARIES = {"sqlalchemy", "psycopg", "alembic"}
 
 
 def _imports(path: Path) -> set[str]:
@@ -54,6 +55,18 @@ def test_entrypoints_do_not_import_adapters() -> None:
         imported = _imports(path)
         assert "app.adapters" not in imported
         assert not any(name.startswith("app.adapters.") for name in imported)
+
+
+def test_database_libraries_only_under_sqlalchemy_adapter() -> None:
+    """The domain does not know SQL exists; composition wires the adapter by name."""
+    for path in APP.rglob("*.py"):
+        hit = _imports(path) & DATABASE_LIBRARIES
+        if not hit:
+            continue
+        location = path.as_posix()
+        assert "adapters/persistence/sqlalchemy" in location, (
+            f"{path} imports {hit} outside adapters/persistence/sqlalchemy"
+        )
 
 
 def test_provider_sdks_only_under_llm_gateway() -> None:

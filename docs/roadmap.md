@@ -140,5 +140,6 @@ more than a short design pass.
 
 Items in [mvp-scope.md](mvp-scope.md#out-of-scope-for-v1) each carry a revisit trigger.
 None is scheduled. They become candidates only when their trigger is observed — in
-particular, vector search waits on measured retrieval failure, and a graph database waits
-on measured query cost.
+particular, a graph database waits on measured query cost. Vector search is no longer
+deferred: it ships in Phase 2 alongside keyword search
+([ADR-0014](adr/adr-0014-hybrid-retrieval.md)).
