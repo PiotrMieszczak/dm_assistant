@@ -13,6 +13,10 @@ factions, a quest log, session records, and a knowledge graph of how everyone co
 Frontend workspace shell is in progress. The backend hexagon is scaffolded for a
 Research chat turn against a fake LLM (no Postgres, no provider SDKs yet).
 
+Both apps start together with `docker compose up --build` from this directory
+([backend/README.md](backend/README.md)). The site is http://localhost:8080 and the API
+docs are http://localhost:8000/docs.
+
 Start with [docs/README.md](docs/README.md).
 
 ## Documentation
